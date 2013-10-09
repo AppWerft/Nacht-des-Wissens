@@ -17,7 +17,7 @@ var win1 = Titanium.UI.createWindow({
 	backgroundColor : '#fff'
 });
 var tab1 = Titanium.UI.createTab({
-	icon : 'KS_nav_views.png',
+	icon : '/icons/route.png',
 	title : 'Busse',
 	window : win1
 });
@@ -27,7 +27,7 @@ var mapcontainer = Ti.UI.createScrollView({
 });
 
 mapcontainer.add(Ti.UI.createImageView({
-	image : '/icons/route.png',
+	image : '/assets/map.png',
 	width : Ti.UI.FILL
 }));
 win1.add(mapcontainer);
@@ -48,7 +48,6 @@ var tab3 = Titanium.UI.createTab({
 
 
 var tab4 = Titanium.UI.createTab({
-	icon : 'KS_nav_ui.png',
 	title : 'FAQ',
 	window : require('ui/faq.window').create()
 });
