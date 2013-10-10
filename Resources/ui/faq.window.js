@@ -11,7 +11,7 @@ exports.create = function() {
 	};
 	var self = Ti.UI.createWindow({
 		fullscreen : false,
-		barColor : '#ddd',
+		barColor : '#ddd',navBarHidden:true,
 		title : 'FAQ'
 	});
 	var views = [];

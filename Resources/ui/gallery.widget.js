@@ -1,7 +1,7 @@
 exports.create = function() {
 	var self = Ti.UI.createScrollView({
 		bottom : 0,
-		height : '100dp',
+		height : '60dp',
 		scrollType : 'horizontal',
 		showHorizontalScrollIndicator : true,
 		width : Ti.UI.FILL,

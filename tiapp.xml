@@ -1,4 +1,5 @@
-<?xml version="1.0" encoding="UTF-8"?><ti:app xmlns:ti="http://ti.appcelerator.org">
+<?xml version="1.0" encoding="UTF-8"?>
+<ti:app xmlns:ti="http://ti.appcelerator.org">
     <id>de.appwerft.nachtdeswissens</id>
     <name>Nacht des Wissens</name>
     <version>1.0</version>
@@ -10,7 +11,7 @@
     <persistent-wifi>false</persistent-wifi>
     <prerendered-icon>false</prerendered-icon>
     <statusbar-style>default</statusbar-style>
-    <statusbar-hidden>false</statusbar-hidden>
+    <statusbar-hidden>true</statusbar-hidden>
     <fullscreen>true</fullscreen>
     <navbar-hidden>true</navbar-hidden>
     <analytics>false</analytics>
@@ -27,32 +28,47 @@
             <orientation>Ti.UI.LANDSCAPE_RIGHT</orientation>
         </orientations>
     </iphone>
-  <android xmlns:android="http://schemas.android.com/apk/res/android">
-        <manifest android:versionCode="17" android:versionName="1.15" package="de.appwerft.nachtdeswissens" xmlns:android="http://schemas.android.com/apk/res/android">
+    <android xmlns:android="http://schemas.android.com/apk/res/android">
+        <manifest android:versionCode="21" android:versionName="1.21"
+            package="de.appwerft.nachtdeswissens" xmlns:android="http://schemas.android.com/apk/res/android">
             <uses-permission android:name="android.permission.INTERNET"/>
             <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
             <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
             <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
             <uses-permission android:name="com.google.android.providers.gsf.permission.READ_GSERVICES"/>
             <uses-feature android:glEsVersion="0x00020000" android:required="true"/>
-            <uses-permission android:name="de.appwerft.nachtdeswissenspermission.MAPS_RECEIVE"/>
-            <permission android:name="de.appwerft.europom.permission.MAPS_RECEIVE" android:protectionLevel="signature"/>
+            <uses-permission android:name="de.appwerft.nachtdeswissens.permission.MAPS_RECEIVE"/>
+            <permission
+                android:name="de.appwerft.europom.permission.MAPS_RECEIVE" android:protectionLevel="signature"/>
             <application>
                 <!--	<meta-data android:name="com.google.android.maps.v2.API_KEY" android:value="AIzaSyAGY7qt05NcfPC6bcLa6YQ7wmffYCKP99M"/>
 				-->
-                <meta-data android:name="com.google.android.maps.v2.API_KEY" android:value="AIzaSyBVO4iCjA0PttSQAkmq6_GbgWC9n40lTSA"/>
-                <activity android:configChanges="keyboardHidden" android:label="" android:name="ti.modules.titanium.media.TiVideoActivity" android:screenOrientation="landscape" android:theme="@android:style/Theme.NoTitleBar.Fullscreen"/>
-                <activity android:configChanges="keyboardHidden" android:name="org.appcelerator.titanium.TiActivity" android:screenOrientation="portrait"/>
-                <activity android:configChanges="keyboardHidden" android:name="org.appcelerator.titanium.TiTranslucentActivity" android:screenOrientation="portrait" android:theme="@android:style/Theme.Translucent"/>
-                <activity android:configChanges="keyboardHidden" android:name="org.appcelerator.titanium.TiModalActivity" android:screenOrientation="portrait" android:theme="@android:style/Theme.Translucent"/>
-                <activity android:configChanges="keyboardHidden" android:name="ti.modules.titanium.ui.TiTabActivity" android:screenOrientation="portrait"/>
+                <meta-data
+                    android:name="com.google.android.maps.v2.API_KEY" android:value="AIzaSyBVO4iCjA0PttSQAkmq6_GbgWC9n40lTSA"/>
+                <activity android:configChanges="keyboardHidden"
+                    android:label=""
+                    android:name="ti.modules.titanium.media.TiVideoActivity"
+                    android:screenOrientation="landscape" android:theme="@android:style/Theme.NoTitleBar.Fullscreen"/>
+                <activity android:configChanges="keyboardHidden"
+                    android:name="org.appcelerator.titanium.TiActivity" android:screenOrientation="portrait"/>
+                <activity android:configChanges="keyboardHidden"
+                    android:name="org.appcelerator.titanium.TiTranslucentActivity"
+                    android:screenOrientation="portrait" android:theme="@android:style/Theme.Translucent"/>
+                <activity android:configChanges="keyboardHidden"
+                    android:name="org.appcelerator.titanium.TiModalActivity"
+                    android:screenOrientation="portrait" android:theme="@android:style/Theme.Translucent"/>
+                <activity android:configChanges="keyboardHidden"
+                    android:name="ti.modules.titanium.ui.TiTabActivity" android:screenOrientation="portrait"/>
                 <activity android:name="ti.modules.titanium.ui.android.TiPreferencesActivity"/>
                 <service android:exported="false" android:name="org.appcelerator.titanium.analytics.TiAnalyticsService"/>
-                <activity android:configChanges="keyboardHidden" android:name="ti.modules.titanium.ui.TiTabActivity" android:screenOrientation="portrait"/>
-                <activity android:configChanges="keyboardHidden" android:name="org.appcelerator.titanium.TiActivity" android:screenOrientation="portrait"/>
+                <activity android:configChanges="keyboardHidden"
+                    android:name="ti.modules.titanium.ui.TiTabActivity" android:screenOrientation="portrait"/>
+                <activity android:configChanges="keyboardHidden"
+                    android:name="org.appcelerator.titanium.TiActivity" android:screenOrientation="portrait"/>
             </application>
         </manifest>
-    </android>  <mobileweb>
+    </android>
+    <mobileweb>
         <precache/>
         <splash>
             <enabled>true</enabled>
@@ -60,7 +76,12 @@
         </splash>
         <theme>default</theme>
     </mobileweb>
-    <modules/>
+    <modules>
+        <module platform="android">facebook</module>
+        <module platform="iphone">facebook</module>
+        <module platform="iphone">com.kuchbee.quickpdf</module>
+   
+    </modules>
     <deployment-targets>
         <target device="android">true</target>
         <target device="blackberry">false</target>
@@ -69,5 +90,6 @@
         <target device="mobileweb">false</target>
         <target device="tizen">false</target>
     </deployment-targets>
-    <sdk-version>3.1.2.GA</sdk-version>
-<property name="ti.deploytype">test</property></ti:app>
+    <sdk-version>3.1.3.GA</sdk-version>
+    <property name="ti.deploytype">test</property>
+</ti:app>

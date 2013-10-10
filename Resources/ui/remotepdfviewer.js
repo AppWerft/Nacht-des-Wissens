@@ -62,10 +62,7 @@ exports.createPDFViewer = function(_pdfurl, _progresswidget) {
 				file : _pdf.file,
 				password : '',
 				isMailEnabled : false,
-				loadFileFrom : 'document',
-				close : function(e) {
-					alert('closed');
-				}
+				loadFileFrom : 'document'
 			});
 			/*var doc = Ti.UI.iOS.createDocumentViewer({
 			 url : _appFile.nativePath

@@ -4,44 +4,46 @@ exports.create = function() {
 	var self = Ti.UI.createWindow({
 		fullscreen : false,
 		barColor : '#ddd',
+		navBarHidden : true,
 		title : 'Wissensgebiete'
 	});
 	self.listView = Ti.UI.createListView({
-		bottom : '100dp',
+		bottom : '60dp',
+		backgroundColor : '#00597C',
 		templates : {
 			'cats' : require('ui/TEMPLATES').catrow
 		},
 		defaultItemTemplate : 'cats',
 	});
 	self.listView.addEventListener('itemclick', function(_e) {/*
-		var win = require('ui/listbycategory.detail.window').create(_e.itemId);
-		if (Ti.Android)
-			win.open();
-		else
-			self.tab.open(win, {
-				animate : true
-			});*/
+		 var win = require('ui/listbycategory.detail.window').create(_e.itemId);
+		 if (Ti.Android)
+		 win.open();
+		 else
+		 self.tab.open(win, {
+		 animate : true
+		 });*/
 	});
 	self.add(self.listView);
 	var sections = [], data = [];
 	for (var i = 0; i < categories.length; i++) {
 		var title = categories[i].split(' (')[0];
-		var count = categories[i].split(' (')[1].replace(')','');
+		var count = categories[i].split(' (')[1].replace(')', '');
 		data.push({
 			pic : {
 				image : '/assets/uhu.png'
 			},
 			category : {
 				text : title
-			},count : {
-				text : 'Anzahl der Sessions: '+ count
+			},
+			count : {
+				text : 'Anzahl der Sessions: ' + count
 			},
 			properties : {
 				itemId : JSON.stringify(categories[i]),
 				accessoryType : Ti.UI.LIST_ACCESSORY_TYPE_DISCLOSURE
 			}
 		});
-		console.log(data);
 		sections[0] = Ti.UI.createListSection({
 			items : data
 		});
