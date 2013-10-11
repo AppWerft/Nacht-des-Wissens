@@ -3,18 +3,17 @@ exports.create = function() {
 		bottom : 0,
 		height : '60dp',
 		scrollType : 'horizontal',
+		contentHeight : '60dp',
 		showHorizontalScrollIndicator : true,
 		width : Ti.UI.FILL,
-		backgroundColor : '#fff',
-		contentWidth : Ti.UI.SIZE,
-		
-		contentHeight : '100dp'
+		backgroundColor : '#00597C',
+		contentWidth : Ti.UI.SIZE
 	});
 	for (var i = 0; i < 80; i++) {
 		var thumb = Ti.UI.createImageView({
 			height : Ti.UI.FILL,
 			width : Ti.UI.SIZE,
-			left : i*50 + 'dp',
+			left : i*30 + 'dp',
 			top : 0,
 			image : '/assets/thumbs/ndw-' + i + '.png' // output of imagemagick
 		});
