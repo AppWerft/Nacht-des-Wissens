@@ -1,6 +1,6 @@
 exports.catrow = {
 	properties : {
-		height : 90,
+		height : 95,
 		backgroundColor : '#00597C',
 	},
 	events : {
@@ -99,11 +99,11 @@ exports.linerow = {
 			type : 'Ti.UI.Label',
 			bindId : 'line',
 			properties : {
-				left : 0,
+				left : 10,
 				top : 0,
 				color : '#f90',
 				font : {
-					fontSize : '27dp',
+					fontSize : '24dp',
 					fontFamily : 'Elektra'
 				},
 				height : Ti.UI.SIZE,
@@ -118,18 +118,33 @@ exports.linerow = {
 
 exports.locrow = {
 	properties : {
-		height : 70,
+		height : 90,
 		backgroundColor : '#00597C',
 	},
 	events : {
 		click : function() {
 		}
 	},
-	childTemplates : [{
+	childTemplates : [ {
+		type : 'Ti.UI.ImageView',
+		bindId : 'pict',
+		properties : {
+			left : 0,
+			top : '5dp',defaultImage:'',
+			bottom : '5dp',
+			width : '80dp',
+			height : Ti.UI.SIZE
+		},
+		events : {
+			click : function() {
+			}
+		}
+
+	},{
 		type : 'Ti.UI.View',
 		properties : {
 			width : Ti.UI.FILL,
-			left : "5dp",
+			left : "90dp",
 			right : '10dp',
 			layout : 'vertical',
 		},
@@ -143,7 +158,7 @@ exports.locrow = {
 			properties : {
 				left : '5dp',
 				top : '7dp',
-				bottom : '7dp',
+				bottom : '5dp',
 				color : '#fff',
 				font : {
 					fontSize : '20dp',

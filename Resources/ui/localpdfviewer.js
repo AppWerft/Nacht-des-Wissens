@@ -3,7 +3,7 @@ exports.createPDFViewer = function(_pdfurl, _progresswidget) {
 		if (Ti.Filesystem.isExternalStoragePresent()) {
 			var filenameBase = new Date().getTime();
 			var tmpFile = Ti.Filesystem.getFile(Ti.Filesystem.tempDirectory, filenameBase + '.pdf');
-			var appFile = Ti.Filesystem.getFile(Ti.Filesystem.resourcesDirectory, _pdfurl)
+			var appFile = Ti.Filesystem.getFile(Ti.Filesystem.resourcesDirectory, _pdfurl);
 			tmpFile.write(appFile.read());
 			if (tmpFile.exists()) {
 				var intent = Ti.Android.createIntent({
