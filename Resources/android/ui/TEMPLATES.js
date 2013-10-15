@@ -28,7 +28,6 @@ exports.catrow = {
 				color : '#fff',
 				font : {
 					fontSize : '24dp',
-					fontWeight : 'bold',
 					fontFamily : 'PTSans-Narrow'
 				},
 				height : Ti.UI.SIZE,

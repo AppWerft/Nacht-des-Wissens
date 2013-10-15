@@ -11,7 +11,8 @@ exports.create = function() {
 	};
 	var self = Ti.UI.createWindow({
 		fullscreen : false,
-		barColor : '#ddd',navBarHidden:true,
+		barColor : '#ddd',
+		navBarHidden : true,
 		title : 'FAQ'
 	});
 	var views = [];
@@ -20,19 +21,24 @@ exports.create = function() {
 			layout : 'vertical',
 			backgroundColor : '#00597C'
 		});
-		view.add(Ti.UI.createLabel({
-			text : q + '\n ',
-			left : '10dp',
-			top : '10dp',
-			right : '10dp',
-			color : 'white',
+		var banner = Ti.UI.createView({
 			backgroundImage : '/assets/rot.png',
+			width : Ti.UI.SIZE,
+			height : Ti.UI.SIZE
+		});
+		banner.add(Ti.UI.createLabel({
+			text : q,
+			top : '7dp',
+			left : '10dp',
+			right : '10dp',
+			bottom : '15dp',
+			color : '#fff',
 			font : {
-				fontSize : '28dp',
-				fontWeight : 'bold',
+				fontSize : '22dp',
 				fontFamily : 'PTSans-Narrow'
 			},
 		}));
+		view.add(banner);
 		view.add(Ti.UI.createLabel({
 			text : faq[q],
 			color : 'silver',
