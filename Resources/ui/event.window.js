@@ -130,7 +130,7 @@ exports.create = function(_options) {
 		top : '10dp',
 		height : Ti.UI.SIZE,
 		color : '#fff',
-		font : {
+		font : {   
 			fontSize : '20dp',
 			fontFamily : 'PTSans-Narrow'
 		},
