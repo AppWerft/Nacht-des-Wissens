@@ -1,6 +1,8 @@
 exports.create = function(_options) {
 	var event = JSON.parse(_options);
-
+	if (!Ti.Network.online && event.location) {
+		 event.location.hvvlink = undefined;
+	}
 	var self = Ti.UI.createWindow({
 		fullscreen : false,
 		barColor : '#ddd',
@@ -17,7 +19,6 @@ exports.create = function(_options) {
 		top : 0
 	});
 	var event = Ti.App.NdW.getEventById(event.id);
-	console.log(event);
 	var banner = Ti.UI.createView({
 		backgroundImage : '/assets/rot.png',
 		width : Ti.UI.SIZE,
@@ -64,7 +65,7 @@ exports.create = function(_options) {
 	}));
 	navi.add(Ti.UI.createLabel({
 		left : '10dp',
-		bottom : '5dp',
+		top : '25dp',
 		text : 'Wann: ' + event.zeit,
 		color : '#fff',
 		font : {
@@ -76,7 +77,7 @@ exports.create = function(_options) {
 		image : (event.fav) ? '/assets/star.png' : '/assets/stargray.png',
 		width : '50dp',
 		backgroundColor : 'transparent',
-		height : '50dp',
+		height : '60dp',
 		right : 0
 	});
 	star.addEventListener('click', function() {
@@ -85,19 +86,58 @@ exports.create = function(_options) {
 	});
 	navi.add(star);
 	container.add(navi);
+	var hvv = Ti.UI.createView({
+		height : Ti.UI.SIZE,
+		top : '10dp',
+		backgroundColor : '#003040'
+	});
+	hvv.add(Ti.UI.createImageView({
+		left : 0,
+		image : (event.location.hvvlink) ? '/assets/hvv.png' : '/assets/hvvgray.png',
+		width : '100dp'
+	}));
+	hvv.add(Ti.UI.createLabel({
+		left : '110dp',
+		text : event.location.hvv,
+		color : 'white',
+		font : {
+			fontSize : '16dp',
+			fontFamily : 'PTSans-Narrow'
+		},
+	}));
+	container.add(hvv);
+	hvv.addEventListener('click', function() {
+		if (event.location.hvvlink) {
+			var win = Ti.UI.createWindow({
+				modal : true,
+				title : 'Fahrplanauskunft für „' + event.location.haus + '“'
+			});
+			win.add(Ti.UI.createWebView({
+				url : event.location.hvvlink
+			}));
+			win.open();
+		}
+	});
 	container.add(Ti.UI.createImageView({
 		image : event.location.grafik,
 		width : Ti.UI.FILL,
-		heigh : 'auto',
-		left : 0,
-		right : 0,
-		top : '15dp',
-		bottom : '100dp'
+		height : Ti.UI.SIZE,
+		top : '50dp'
+	}));
+	container.add(Ti.UI.createLabel({
+		text : event.location.infotext,
+		top : '10dp',
+		height : Ti.UI.SIZE,
+		color : '#fff',
+		font : {
+			fontSize : '20dp',
+			fontFamily : 'PTSans-Narrow'
+		},
 	}));
 	self.add(container);
 	var toast = Ti.UI.createNotification({
 		message : (event.fav) ? 'Diese Veranstaltung hast Du Dir schon vorgemerkt.' : "Mit dem kleinen Stern kannst Du Dir dieses Ereignis merken.",
-		duration : Ti.UI.NOTIFICATION_DURATION_LONG
+		duration : Ti.UI.NOTIFICATION_DURATION_SHORT
 	});
 	toast.show();
 	return self;

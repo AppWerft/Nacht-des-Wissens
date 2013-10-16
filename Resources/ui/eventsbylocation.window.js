@@ -1,6 +1,5 @@
 exports.create = function(_options) {
 	var location = JSON.parse(_options);
-	console.log(location);
 	var self = Ti.UI.createWindow({
 		fullscreen : false,
 		barColor : '#ddd',
@@ -16,23 +15,23 @@ exports.create = function(_options) {
 		},
 		defaultItemTemplate : 'event',
 	});
-	
+
 	var events = Ti.App.NdW.getEventsByLocation(location.id);
 	var data = [];
 	for (var i = 0; i < events.length; i++) {
 		var event = events[i];
 		data.push({
 			kind : {
-				image : (event['kinderprogramm']) ? '/assets/forkind.png' : '/assets/null.png'
+				image : (event.kinderprogramm == true) ? '/assets/forkind.png' : '/assets/null.png'
 			},
 			rollstuhl : {
-				image : (event['nicht_barrierefrei']) ? '/assets/norollstuhl.png' : '/assets/rollstuhl.png'
+				image : (event.barrierefrei == true) ? '/assets/norollstuhl.png' : '/assets/rollstuhl.png'
 			},
 			title : {
 				text : event.titel
 			},
 			zeit : {
-				text : (event.zeit) ?event.zeit + '  ' : null
+				text : (event.zeit) ? event.zeit + '  ' : null
 			},
 			properties : {
 				itemId : JSON.stringify(event),

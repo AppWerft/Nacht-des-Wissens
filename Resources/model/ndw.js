@@ -6,9 +6,83 @@ Array.prototype.in_array = function(needle) {
 };
 
 var NdW = function() {
-	this.DB = Ti.Database.install('/model/nachtdeswissens.sqlite', 'nachtdeswissensutf8');
-	this.getAllLines();
 	return this;
+};
+
+NdW.prototype.init = function(_args) {
+	/*this.DB = Ti.Database.install('/model/nachtdeswissens.sqlite', 'nachtdeswissensutf8');
+	 _args.onconnect && _args.onconnect(true);
+	 return;*/
+	var self = this;
+	this.getDB({
+		url : 'http://nacht-des-wissens-hamburg.de/lib/export/hh_app_export.sqlite.php',
+		aspectedtablecount :6,
+		onprogress : _args.onprogress,
+		onconnect : function(_DBconn) {
+			console.log('Info: sucessful mirroring in model::init ' + _DBconn);
+			self.DB = _DBconn;
+			_args.onconnect && _args.onconnect(true);
+		}
+	});
+};
+
+NdW.prototype.getDB = function(_args) {
+	var self = this;
+	var DBconn = undefined;
+	var dbname = Ti.Utils.md5HexDigest(_args.url);
+	var onOffline = function() {
+		console.log('Info: offline node ==> try to open cached db');
+		DBconn = Ti.Database.open(dbname);
+		var res = DBconn.execute('SELECT count(*) total FROM sqlite_master WHERE type="table" order by name');
+		if (res.isValidRow()) {
+			var total = res.fieldByName('total');
+			console.log('Info: tables found='+total+ ' aspectedtablecount='+_args.aspectedtablecount);
+			res.close();
+			if (total == _args.aspectedtablecount && _args.onconnect)
+				_args.onconnect(DBconn);
+		} else {
+			if (Ti.Android)
+				DBconn.remove();
+			else
+				DBconn.file.deleteFile();
+			if (_args.defaultpath) {
+				DBconn = Ti.Database.install(_args.defaultpath, dbname);
+				_args.onconnect && _args.onconnect(DBconn);
+				Ti.App.Properties.setString('dbmtime', (new Date).getTime());
+			}
+		}
+	};
+	const FILESIZE = 600000;
+	var xhr = Ti.Network.createHTTPClient({
+		onerror : onOffline,
+		ondatastream : function(_p) {
+			if (_args.onprogress) {
+				if (_p.progress < 0)
+					_p.progress = (1 - _p.progress/FILESIZE)/2;
+				_args.onprogress(_p.progress);
+			}
+		},
+		onload : function() {
+			var filename = dbname + '.sql';
+			var tempfile = Ti.Filesystem.getFile(Ti.Filesystem.getTempDirectory(), filename);
+			tempfile.write(this.responseData);
+			try {
+				var dummy = Ti.Database.open(dbname);
+				if (Ti.Android)
+					dummy.remove();
+				else
+					dummy.file.deleteFile();
+			} catch(E) {
+				onOffline();
+				return;
+			}
+			DBconn = Ti.Database.install(tempfile.nativePath, dbname);
+			console.log('Info: DBhandler ' + DBconn);
+			_args.onconnect && _args.onconnect(DBconn);
+		}
+	});
+	xhr.open('GET', _args.url);
+	xhr.send();
 };
 
 NdW.prototype.addFav = function(_id) {
@@ -92,21 +166,56 @@ NdW.prototype.getLocationsByLine = function(line) {
 		res.next();
 	}
 	res.close();
+	console.log('.................................');
+	console.log(loclist);
 	return loclist;
 };
+
 NdW.prototype.getLocationById = function(id) {
-	var res = this.DB.execute('SELECT * FROM veranstaltungsorte WHERE id= ?', id);
+	var self = this;
+	var getShuttlesById = function(ids) {
+		var sql = 'SELECT * FROM routen WHERE id IN (' + ids.join(',') + ')';
+		console.log(sql);
+		var res = self.DB.execute(sql);
+		var shuttles = [];
+		while (res.isValidRow()) {
+			shuttles.push({
+				takt : res.fieldByName('takt'),
+				name : res.fieldByName('name'),
+			});
+			res.next();
+		}
+		res.close();
+		return shuttles;
+	};
+	var res = this.DB.execute('SELECT *,hvv_link_id hvvlink FROM veranstaltungsorte WHERE id= ?', id);
 	var location = {};
 	if (res.isValidRow()) {
+		console.log(res.fieldByName('hvvlink'));
 		location = {
 			id : res.fieldByName('id'),
 			teilnehmer : res.fieldByName('teilnehmer') || '',
 			haus : res.fieldByName('haus') || '',
 			barrierefrei : (res.fieldByName('nicht_barrierefrei')) ? false : true,
 			catering : res.fieldByName('catering'),
+			plz : res.fieldByName('plz'),
+			ort : res.fieldByName('ort'),
+			strasse : res.fieldByName('strasse'),
+			hvv : res.fieldByName('hvv'),
+			hvvlink : (res.fieldByName('hvvlink')) ? 'http://www.hvv.de/fp.php?id=' + res.fieldByName('hvvlink') : null,
+			infotext : res.fieldByName('infotext'),
 			grafik : 'http://nachtdeswissens.hamburg.de/files/docs/' + res.fieldByName('grafik'),
 			pict : 'http://nachtdeswissens.hamburg.de/files/docs/resized/150x120/' + res.fieldByName('bild_datei'),
 		};
+		var routen_ids = [];
+		// das ist nun wirklich krank, aber der "DB" geschuldet
+		for (var i = 1; i <= 7; i++) {
+			if (res.fieldByName('route_' + i + '_id')) {
+				routen_ids.push(i);
+			}
+		}
+		location.shuttles = getShuttlesById(routen_ids);
+
 	}
 	res.close();
 	return location;
@@ -137,6 +246,7 @@ NdW.prototype.getEventById = function(id) {
 			titel : res.fieldByName('titel') || '',
 			zeit : res.fieldByName('zeit') || 'dauerhaft',
 			ort : res.fieldByName('ort') || '',
+			barrierefrei : (res.fieldByName('nicht_barrierefrei')) ? false : true,
 			catering : res.fieldByName('catering'),
 			kinderprogramm : res.fieldByName('kinderprogramm'),
 			kinderab : res.fieldByName('kinder_ab'),

@@ -174,7 +174,7 @@ exports.locrow = {
 		type : 'Ti.UI.ImageView',
 		bindId : 'catering',
 		properties : {
-			right : '5dp',
+			right : '35dp',
 			bottom : '5dp',
 			width : '24dp',
 			height : '24dp'

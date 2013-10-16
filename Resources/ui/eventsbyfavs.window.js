@@ -18,8 +18,7 @@ exports.create = function() {
 	var updateList = function() {
 		var events = Ti.App.NdW.getFavs();
 		if (events.length == 0) {
-			alert('Hier werden die von Dir vorgemerkten Ereignisse angezeigt. Du kannst Sie mit dem Stern auf dr Ereignisseite vormerken.')
-
+			alert('Hier werden die von Dir vorgemerkten Ereignisse angezeigt. Du kannst Sie mit dem Stern auf dr Ereignisseite vormerken.');
 			return;
 		}
 		var data = [];

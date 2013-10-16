@@ -1,6 +1,5 @@
 exports.create = function(_options) {
 	var tag = JSON.parse(_options);
-	console.log(tag);
 	var self = Ti.UI.createWindow({
 		fullscreen : false,
 		barColor : '#ddd',
