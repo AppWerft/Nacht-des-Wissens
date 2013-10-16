@@ -42,13 +42,12 @@ exports.create = function() {
 		if (lines[i].locations && lines[i].locations.isArray)
 			for (var loc = 0; loc < lines[i].locations.length; loc++) {
 				var location = lines[i].locations[loc];
-				console.log('Info: adding pict=' + location);
 				data.push({
 					pict : {
 						image : location.pict
 					},
 					catering : {
-						image : (location.catering)?'/assets/catering.png':'/assets/null.png',
+						image : (location.catering) ? '/assets/catering.png' : '/assets/null.png',
 					},
 					loc : {
 						text : location.haus + '\n' + location.teilnehmer
@@ -59,7 +58,6 @@ exports.create = function() {
 						accessoryType : Ti.UI.LIST_ACCESSORY_TYPE_DISCLOSURE
 					}
 				});
-				console.log(location);
 			}
 		sections[0] = Ti.UI.createListSection({
 			items : data

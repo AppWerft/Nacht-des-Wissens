@@ -16,7 +16,8 @@ NdW.prototype.init = function(_args) {
 	var self = this;
 	this.getDB({
 		url : 'http://nacht-des-wissens-hamburg.de/lib/export/hh_app_export.sqlite.php',
-		aspectedtablecount :6,
+		aspectedtablecount : 6,
+		aspectedcontentlength : 600000,
 		onprogress : _args.onprogress,
 		onconnect : function(_DBconn) {
 			console.log('Info: sucessful mirroring in model::init ' + _DBconn);
@@ -36,15 +37,29 @@ NdW.prototype.getDB = function(_args) {
 		var res = DBconn.execute('SELECT count(*) total FROM sqlite_master WHERE type="table" order by name');
 		if (res.isValidRow()) {
 			var total = res.fieldByName('total');
-			console.log('Info: tables found='+total+ ' aspectedtablecount='+_args.aspectedtablecount);
+			console.log('Info: tables found=' + total + ' aspectedtablecount=' + _args.aspectedtablecount);
 			res.close();
-			if (total == _args.aspectedtablecount && _args.onconnect)
+			if (total == _args.aspectedtablecount && _args.onconnect) {
+				Ti.UI.createNotification({
+					message : "Keine neue Version verfügbar, nutze Daten der letzten Mutzung.",
+					duration : Ti.UI.NOTIFICATION_DURATION_LONG
+				}).show();
 				_args.onconnect(DBconn);
+			} else {
+				if (Ti.Android)
+					DBconn.remove();
+				else
+					DBconn.file.deleteFile();
+				alert('Für die Aktualisierung der Daten braucht die App wenigstens einmal das Internet');
+				return;
+			}
 		} else {
 			if (Ti.Android)
 				DBconn.remove();
 			else
 				DBconn.file.deleteFile();
+
+			alert('Für die Aktualisierung der Daten braucht die App wenigstens einmal das Internet');
 			if (_args.defaultpath) {
 				DBconn = Ti.Database.install(_args.defaultpath, dbname);
 				_args.onconnect && _args.onconnect(DBconn);
@@ -52,13 +67,12 @@ NdW.prototype.getDB = function(_args) {
 			}
 		}
 	};
-	const FILESIZE = 600000;
 	var xhr = Ti.Network.createHTTPClient({
 		onerror : onOffline,
 		ondatastream : function(_p) {
 			if (_args.onprogress) {
 				if (_p.progress < 0)
-					_p.progress = (1 - _p.progress/FILESIZE)/2;
+					_p.progress = (1 - _p.progress / _args.aspectedcontentlength) / 2;
 				_args.onprogress(_p.progress);
 			}
 		},
@@ -83,6 +97,18 @@ NdW.prototype.getDB = function(_args) {
 	});
 	xhr.open('GET', _args.url);
 	xhr.send();
+};
+
+NdW.prototype.getLastMod = function() {
+	var res = this.DB.execute('SELECT modifiziert_am mtime FROM veranstaltungsorte ORDER BY modifiziert_am DESC LIMIT 0,1');
+	if (res.isValidRow()) {
+		Ti.UI.createNotification({
+			message : "Letzte Änderung:  " + res.fieldByName('mtime'),
+			duration : Ti.UI.NOTIFICATION_DURATION_LONG,
+			bottom : 0,
+		}).show();
+		res.close();
+	}
 };
 
 NdW.prototype.addFav = function(_id) {
@@ -166,8 +192,6 @@ NdW.prototype.getLocationsByLine = function(line) {
 		res.next();
 	}
 	res.close();
-	console.log('.................................');
-	console.log(loclist);
 	return loclist;
 };
 
@@ -175,7 +199,6 @@ NdW.prototype.getLocationById = function(id) {
 	var self = this;
 	var getShuttlesById = function(ids) {
 		var sql = 'SELECT * FROM routen WHERE id IN (' + ids.join(',') + ')';
-		console.log(sql);
 		var res = self.DB.execute(sql);
 		var shuttles = [];
 		while (res.isValidRow()) {
@@ -191,7 +214,6 @@ NdW.prototype.getLocationById = function(id) {
 	var res = this.DB.execute('SELECT *,hvv_link_id hvvlink FROM veranstaltungsorte WHERE id= ?', id);
 	var location = {};
 	if (res.isValidRow()) {
-		console.log(res.fieldByName('hvvlink'));
 		location = {
 			id : res.fieldByName('id'),
 			teilnehmer : res.fieldByName('teilnehmer') || '',
@@ -202,7 +224,7 @@ NdW.prototype.getLocationById = function(id) {
 			ort : res.fieldByName('ort'),
 			strasse : res.fieldByName('strasse'),
 			hvv : res.fieldByName('hvv'),
-			hvvlink : (res.fieldByName('hvvlink')) ? 'http://www.hvv.de/fp.php?id=' + res.fieldByName('hvvlink') : null,
+			hvvlink : (res.fieldByName('hvvlink')) ? 'http://m.hvv.de/fp.php?id=' + res.fieldByName('hvvlink') : null,
 			infotext : res.fieldByName('infotext'),
 			grafik : 'http://nachtdeswissens.hamburg.de/files/docs/' + res.fieldByName('grafik'),
 			pict : 'http://nachtdeswissens.hamburg.de/files/docs/resized/150x120/' + res.fieldByName('bild_datei'),
@@ -235,17 +257,43 @@ NdW.prototype.getTags = function() {
 	return tags;
 };
 
-NdW.prototype.getEventById = function(id) {
-	var result = undefined;
-	var res = this.DB.execute('SELECT * FROM programmpunkte WHERE id = ?', id);
-	if (res.isValidRow()) {
-		result = {
+NdW.prototype.searchEvents = function(_args) {
+	var res = this.DB.execute('SELECT * FROM programmpunkte WHERE beschreibung LIKE "%' + _args.needle + '%"');
+	var results = [];
+	while (res.isValidRow()) {
+		var id = res.fieldByName('id');
+		results.push( result = {
 			id : res.fieldByName('id'),
 			fav : this.isFav(id),
 			description : res.fieldByName('beschreibung') || '',
 			titel : res.fieldByName('titel') || '',
-			zeit : res.fieldByName('zeit') || 'dauerhaft',
-			ort : res.fieldByName('ort') || '',
+			zeit : res.fieldByName('zeit') || 'keine Angabe',
+			ort : res.fieldByName('ort') || 'keine Angabe',
+			barrierefrei : (res.fieldByName('nicht_barrierefrei')) ? false : true,
+			catering : res.fieldByName('catering'),
+			kinderprogramm : res.fieldByName('kinderprogramm'),
+			kinderab : res.fieldByName('kinder_ab'),
+			location : this.getLocationById(res.fieldByName('veranstaltungsort_id'))
+		});
+		res.next();
+	}
+	res.close();
+	_args.onfound && _args.onfound(results);
+
+};
+
+NdW.prototype.getEventById = function(id) {
+	var result = undefined;
+	var res = this.DB.execute('SELECT * FROM programmpunkte WHERE id = ?', id);
+	if (res.isValidRow()) {
+		var id = res.fieldByName('id');
+		result = {
+			id : id,
+			fav : this.isFav(id),
+			description : res.fieldByName('beschreibung') || '',
+			titel : res.fieldByName('titel') || '',
+			zeit : res.fieldByName('zeit') || 'keine Angabe',
+			ort : res.fieldByName('ort') || 'keine Angabe',
 			barrierefrei : (res.fieldByName('nicht_barrierefrei')) ? false : true,
 			catering : res.fieldByName('catering'),
 			kinderprogramm : res.fieldByName('kinderprogramm'),

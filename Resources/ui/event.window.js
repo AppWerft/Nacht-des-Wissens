@@ -1,7 +1,7 @@
 exports.create = function(_options) {
 	var event = JSON.parse(_options);
 	if (!Ti.Network.online && event.location) {
-		 event.location.hvvlink = undefined;
+		event.location.hvvlink = undefined;
 	}
 	var self = Ti.UI.createWindow({
 		fullscreen : false,
@@ -83,6 +83,7 @@ exports.create = function(_options) {
 	star.addEventListener('click', function() {
 		Ti.App.NdW.addFav(event.id);
 		star.setImage('/assets/star.png');
+		Ti.App.Properties.setString('star', 'star');
 	});
 	navi.add(star);
 	container.add(navi);
@@ -135,10 +136,10 @@ exports.create = function(_options) {
 		},
 	}));
 	self.add(container);
-	var toast = Ti.UI.createNotification({
-		message : (event.fav) ? 'Diese Veranstaltung hast Du Dir schon vorgemerkt.' : "Mit dem kleinen Stern kannst Du Dir dieses Ereignis merken.",
-		duration : Ti.UI.NOTIFICATION_DURATION_SHORT
-	});
-	toast.show();
+	if (!Ti.App.Properties.hasProperty('star'))
+		Ti.UI.createNotification({
+			message : "Mit dem kleinen Stern rechts oben kannst Du Dir dieses Ereignis merken.",
+			duration : Ti.UI.NOTIFICATION_DURATION_SHORT
+		}).show();
 	return self;
 };

@@ -11,8 +11,9 @@ exports.create = function() {
 		state++;
 	}, 250);
 	var pb = Ti.UI.createProgressBar({
-		bottom : '160dp',
-		height : '50dp',
+		bottom : '25%',
+		height : '40dp',
+		opacity : 0.5,
 		width : '90%',
 		min : 0,
 		max : 1
@@ -25,6 +26,7 @@ exports.create = function() {
 		},
 		onconnect : function() {
 			clearInterval(cron);
+			Ti.App.NdW.getLastMod();
 			var tabGroup = Ti.UI.createTabGroup();
 			var tab1 = Titanium.UI.createTab({
 				icon : '/icons/route.png',
@@ -33,11 +35,11 @@ exports.create = function() {
 			});
 			var tab2 = Titanium.UI.createTab({
 				icon : '/icons/notepad.png',
-				title : 'Themen',
+				title : 'Suche',
 				window : require('ui/categories.window').create()
 			});
 			var tab4 = Titanium.UI.createTab({
-				title : 'FAQ',
+				title : 'Fragen',
 				icon : '/icons/faq.png',
 				window : require('ui/faq.window').create()
 			});

@@ -202,8 +202,8 @@ exports.eventrow = {
 		properties : {
 			right : '5dp',
 			bottom : '5dp',
-			width : '24dp',
-			height : '24dp'
+			width : '20dp',
+			height : '20dp'
 		},
 		events : {
 			click : function() {
@@ -214,10 +214,10 @@ exports.eventrow = {
 		type : 'Ti.UI.ImageView',
 		bindId : 'rollstuhl',
 		properties : {
-			right : '35dp',
+			right : '30dp',
 			bottom : '5dp',
-			width : '24dp',
-			height : '24dp'
+			width : '20dp',
+			height : '20dp'
 		},
 		events : {
 			click : function() {
@@ -229,8 +229,8 @@ exports.eventrow = {
 		properties : {
 			top : '5dp',
 			width : Ti.UI.FILL,
-			left : "10dp",
-			right : '50dp',
+			left : "100dp",
+			right : '30dp',
 			layout : 'vertical',
 		},
 		events : {
@@ -246,7 +246,25 @@ exports.eventrow = {
 				bottom : '5dp',
 				color : '#fff',
 				font : {
-					fontSize : '22dp',
+					fontSize : '24dp',
+					fontFamily : 'PTSans-Narrow'
+				},
+				height : Ti.UI.SIZE,
+			},
+			events : {
+				'click' : function() {
+				}
+			}
+		},{
+			type : 'Ti.UI.Label',
+			bindId : 'location',
+			properties : {
+				left : 0,
+				top : 0,
+				bottom : '5dp',
+				color : '#fff',
+				font : {
+					fontSize : '18dp',
 					fontFamily : 'PTSans-Narrow'
 				},
 				height : Ti.UI.SIZE,
@@ -275,6 +293,22 @@ exports.eventrow = {
 				}
 			}
 		}]
+	},{
+		type : 'Ti.UI.ImageView',
+		bindId : 'pict',
+		properties : {
+			left : 0,
+			top : '5dp',
+			defaultImage : '/assets/uhu.png',
+			bottom : '5dp',
+			width : '90dp',
+			height : Ti.UI.SIZE
+		},
+		events : {
+			click : function() {
+			}
+		}
+
 	}]
 };
 
