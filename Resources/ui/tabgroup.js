@@ -38,6 +38,11 @@ exports.create = function() {
 				title : 'Suche',
 				window : require('ui/categories.window').create()
 			});
+			var tab3 = Titanium.UI.createTab({
+				icon : '/icons/twitterbird.png',
+				title : 'Twitter',
+				window : require('ui/twitter.window').create()
+			});
 			var tab4 = Titanium.UI.createTab({
 				title : 'Fragen',
 				icon : '/icons/faq.png',
@@ -53,6 +58,7 @@ exports.create = function() {
 			tabGroup.addTab(tab1);
 			tabGroup.addTab(tab2);
 			tabGroup.addTab(tab4);
+			tabGroup.addTab(tab3);
 			tabGroup.addTab(tab5);
 			splash.close();
 			tabGroup.open();
