@@ -276,9 +276,6 @@ var Codebird = function () {
      * @return void
      */
     var setConsumerKey = function (key, secret) {
-    	console.log(key);
-    	console.log(secret);
-    	
         _oauth_consumer_key = key;
         _oauth_consumer_secret = secret;
     };
