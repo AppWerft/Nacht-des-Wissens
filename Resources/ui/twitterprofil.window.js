@@ -6,21 +6,26 @@ exports.create = function(_user) {
 		title : _user['name'],
 		backgroundColor : '#00597C'
 	});
-	var bg = Ti.UI.createScrollView({
-		width : Ti.UI.FILL,
+	var scroller = Ti.UI.createScrollView({
 		scrollType : 'horizontal',
-		contentWidth : 2000,
-		height : Ti.UI.FILL
+		width : Ti.UI.FILL,
+		contentWidth : Ti.Platform.displayCaps.platformHeight * 1.4,
 	});
-
-	self.add(bg);
+	self.add(scroller);
+	var bg = Ti.UI.createImageView({
+		width : Ti.Platform.displayCaps.platformHeight * 1.4,
+		height : Ti.Platform.displayCaps.platformHeight
+	});
+	scroller.add(bg);
 	self.add(Ti.UI.createView({
 		width : Ti.UI.FILL,
 		height : Ti.UI.FILL,
+		bubbleParent : true,
+		touchEnabled : false,
 		opacity : '0.7',
-		left : '50dp',
-		right : '50dp',
-		top : '50dp',
+		left : '30dp',
+		right : '30dp',
+		top : '30dp',
 		borderWidth : 1,
 		zIndex : 10,
 		borderRadius : '10dp',
@@ -29,9 +34,9 @@ exports.create = function(_user) {
 	if (_user.name)
 		self.add(Ti.UI.createLabel({
 			text : _user.name,
-			top : '70dp',
-			left : '70dp',
-			right : '70dp',
+			top : '50dp',
+			left : '50dp',
+			right : '50dp',
 			color : 'black',
 			zIndex : 20,
 			font : {
@@ -43,9 +48,9 @@ exports.create = function(_user) {
 	if (_user.location)
 		self.add(Ti.UI.createLabel({
 			text : _user.location,
-			top : '130dp',
-			left : '70dp',
-			right : '70dp',
+			top : '150dp',
+			left : '50dp',
+			right : '50dp',
 			color : 'black',
 			zIndex : 20,
 			font : {
@@ -58,8 +63,8 @@ exports.create = function(_user) {
 		self.add(Ti.UI.createLabel({
 			text : _user.description,
 			top : '210dp',
-			left : '70dp',
-			right : '100dp',
+			left : '50dp',
+			right : '50dp',
 			zIndex : 99,
 			color : '#00597C',
 			font : {
@@ -67,12 +72,31 @@ exports.create = function(_user) {
 				fontWeight : 'bold',
 				fontFamily : 'PTSans-Narrow'
 			}
-		}));console.log(_user['profile_background_image_url']);
-	/*try {
-		if (_user["profile_use_background_image"] && _user['profile_background_image_url'])
-			bg.setBackgroundImage(_user['profile_background_image_url']);
-	} catch(E) {
-	}*/
+		}));
+	if (_user["profile_use_background_image"] && _user['profile_background_image_url']) {
+		var xhr = Ti.Network.createHTTPClient({
+			onerror : function(e) {
+				console.log(this.error + e.error);
+			},
+			onload : function(e) {
+				console.log('Info: got bg for twitter, status: ' + this.status);
+				if (this.status == 200) {
+					console.log('Info: ' + this.responseData.length);
+
+					bg.setImage(this.responseData);
+					bg.animate(Ti.UI.createAnimation({
+						contentOffset : {
+							x : '500dp',
+							y : 0
+						},
+						duration : 10000
+					}));
+				}
+			}
+		});
+		xhr.open('GET', _user['profile_background_image_url']);
+		xhr.send();
+	}
 	return self;
 };
 
