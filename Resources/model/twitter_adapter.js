@@ -65,6 +65,21 @@ TwitterAdapter.prototype.clearAccessToken = function() {
 };
 
 TwitterAdapter.prototype.addTweet = function(_args) {
+	if (!_args.tweet.match(/ndwhh/))
+		_args.tweet += ' #ndwhh';
+	this.cb.__call("statuses_update", {
+		"status" : _args.tweet
+	}, function(reply) {
+		if (reply.httpstatus == 200) {
+			Ti.UI.createNotification({
+				message : "Tweet erfolgreich publiziert.",
+				duration : Ti.UI.NOTIFICATION_DURATION_LONG
+			}).show();
+			_args.ontweeted && _args.ontweeted(true);
+		} else {
+			_args.ontweeted && _args.ontweeted(false);
+		}
+	});
 };
 
 TwitterAdapter.prototype.autorize = function(_callback) {
@@ -76,8 +91,7 @@ TwitterAdapter.prototype.autorize = function(_callback) {
 		_callback && _callback({
 			success : true
 		});
-	}
-	else {
+	} else {
 		var self = this;
 		this.cb.__call("oauth_requestToken", {
 			oauth_callback : "oob"
@@ -122,7 +136,7 @@ TwitterAdapter.prototype.autorize = function(_callback) {
 						}, function(reply) {
 							self.cb.setToken(reply.oauth_token, reply.oauth_token_secret);
 							Ti.API.info(reply);
-							
+
 							self.accessToken = reply.oauth_token;
 							self.accessTokenSecret = reply.oauth_token_secret;
 							self.saveAccessToken();

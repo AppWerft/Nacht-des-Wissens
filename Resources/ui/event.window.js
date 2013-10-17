@@ -14,7 +14,6 @@ exports.create = function(_options) {
 		scrollType : 'vertical',
 		left : '10dp',
 		right : '10dp',
-		top : '20dp',
 		layout : 'vertical',
 		top : 0
 	});
