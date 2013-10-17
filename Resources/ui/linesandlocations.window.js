@@ -17,13 +17,16 @@ exports.create = function() {
 		defaultItemTemplate : 'locs',
 	});
 	self.listView.addEventListener('itemclick', function(_e) {
-		var win = require('ui/eventsbylocation.window').create(_e.itemId);
-		if (Ti.Android)
-			win.open();
-		else
-			self.tab.open(win, {
-				animate : true
-			});
+		var props = _e.section.getItemAt(_e.itemIndex).properties;
+		if (props.itemId) {
+			var win = require('ui/eventsbylocation.window').create(props.itemId);
+			if (Ti.Android)
+				win.open();
+			else
+				self.tab.open(win, {
+					animate : true
+				});
+		}
 	});
 	self.add(self.listView);
 	var sections = [], data = [];

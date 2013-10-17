@@ -3,31 +3,56 @@ exports.create = function() {
 		fullscreen : false,
 		barColor : '#ddd',
 		navBarHidden : true,
+		backgroundColor : '#00597C'
 	});
-	self.search = Titanium.UI.createSearchBar({
-		barColor : '#00597C',
-		showCancel : false,
-		value : '#nachtdeswissens',
-		height : '50dp',
-		top : 0,
+	/*self.search = Titanium.UI.createSearchBar({
+	 barColor : '#00597C',
+	 showCancel : false,
+	 value : '#nachtdeswissens',
+	 height : '50dp',
+	 top : 0,
+	 });
+	 self.search.addEventListener('return', function(_e) {
+	 });*/
+	self.tweetButton = Ti.UI.createButton({
+		backgroundImage : '/assets/tweet.png',
+		bottom : 0,
+		width : '160dp',
+		height : '40dp',
+		right : 0,
+		bubbleParent : false,
+		height : '50dp'
 	});
-	self.search.addEventListener('return', function(_e) {
-	});
-	self.tv = Ti.UI.createTableView({
-		top : '0dp',
+	self.tweetButtonList = Ti.UI.createTableView({
 		height : Ti.UI.FILL,
 		backgroundColor : '#00597C'
 	});
-	self.tv.addEventListener('click', function(_e) {
+	self.tweetButtonList.addEventListener('click', function(_e) {
+		var uri_pattern = /\b((?:[a-z][\w-]+:(?:\/{1,3}|[a-z0-9%])|www\d{0,3}[.]|[a-z0-9.\-]+[.][a-z]{2,4}\/)(?:[^\s()<>]+|\(([^\s()<>]+|(\([^\s()<>]+\)))*\))+(?:\(([^\s()<>]+|(\([^\s()<>]+\)))*\)|[^\s`!()\[\]{};:'".,<>?«»“”‘’]))/ig;
+		var uri = _e.rowData.tweet.match(uri_pattern);
+		var options = ['Twitter.Profil', 'Retweet'];
+		if (uri)
+			options.push('Link');
 		var dialog = Ti.UI.createOptionDialog({
-			options : [_e.rowData.user.name, 'Retweet', 'Link'],
-			title : 'Wie geht es weiter?'
+			options : options,
+			title : _e.rowData.user.name
 		});
 		dialog.show();
 		dialog.addEventListener('click', function(_d) {
 			switch(_d.index) {
 				case 0:
 					var win = require('ui/twitterprofil.window').create(_e.rowData.user);
+					break;
+				case 2:
+					console.log(uri);
+					var win = Ti.UI.createWindow({
+						fullscreen : false
+					});
+					win.add(Ti.UI.createWebView({
+						url : uri[0]
+					}));
+					break;
+				case 1:
 					break;
 			}
 			if (Ti.Android)
@@ -39,13 +64,14 @@ exports.create = function() {
 		});
 	});
 	function updateTweets() {
+		return;
 		Ti.App.Twitter.fetch('search_tweets', 'NachtdesWissens', function(_response) {
 			var rows = [];
-			console.log('Info: tweets=' + _response.statuses.length);
 			for (var i = 0; i < _response.statuses.length; i++) {
 				var tweet = _response.statuses[i];
 				var row = Ti.UI.createTableViewRow({
 					user : tweet.user,
+					tweet : tweet.text,
 					hasChild : true
 				});
 				row.add(Ti.UI.createLabel({
@@ -70,14 +96,15 @@ exports.create = function() {
 				}));
 				rows.push(row);
 			}
-			self.tv.setData(rows);
+			self.tweetButtonList.setData(rows);
 		});
 	}
-
-
-	self.add(self.search);
-	self.add(self.tv);
-	self.addEventListener('focus', updateTweets);
+	self.add(self.tweetButtonList);
+	self.add(self.tweetButton);
+	self.tweetButton.addEventListener('click', Ti.App.Twitter.tweet());
+	self.addEventListener('focus', function() {
+		updateTweets();
+	});
 	updateTweets();
 	return self;
 };

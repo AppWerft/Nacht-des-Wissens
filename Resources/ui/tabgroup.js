@@ -5,11 +5,12 @@ exports.create = function() {
 	});
 	splash.open();
 	console.log('Info: SPLASH created ======================================');
-	var state = 0;
 	var cron = setInterval(function() {
-		splash.setBackgroundImage((state % 2) ? 'default.png' : 'default_.png');
-		state++;
-	}, 250);
+		splash.setBackgroundImage('default_.png');
+		setTimeout(function() {
+			splash.setBackgroundImage('default.png');
+		}, 150);
+	}, 500);
 	var pb = Ti.UI.createProgressBar({
 		bottom : '25%',
 		height : '40dp',
@@ -27,6 +28,7 @@ exports.create = function() {
 		onconnect : function() {
 			clearInterval(cron);
 			Ti.App.NdW.getLastMod();
+			splash.close();
 			var tabGroup = Ti.UI.createTabGroup();
 			var tab1 = Titanium.UI.createTab({
 				icon : '/icons/route.png',
@@ -55,12 +57,17 @@ exports.create = function() {
 				window : require('ui/eventsbyfavs.window').create()
 			});
 			//tabGroup.addTab(tab2);
-			tabGroup.addTab(tab1);
-			tabGroup.addTab(tab2);
-			tabGroup.addTab(tab4);
-			tabGroup.addTab(tab3);
-			tabGroup.addTab(tab5);
-			splash.close();
+			if (tab1)
+				tabGroup.addTab(tab1);
+			if (tab2)
+				tabGroup.addTab(tab2);
+			if (tab4)
+				tabGroup.addTab(tab4);
+			if (tab3)
+				tabGroup.addTab(tab3);
+			if (tab5)
+				tabGroup.addTab(tab5);
+
 			tabGroup.open();
 		}
 	});
