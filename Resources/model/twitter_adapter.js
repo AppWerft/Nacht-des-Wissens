@@ -1,16 +1,10 @@
-/*
- *
- *
- * Example: https://gist.github.com/Rogichi/5905010
- *
- *
- */
-var Twitter = function(_options) {
-	//this.init(_options);
+var TwitterAdapter = function(_options) {
+	this.init(_options);
 	return this;
 };
 
-Twitter.prototype.init = function(_options) {
+TwitterAdapter.prototype.init = function(_options) {
+	this.service = _options && _options.service || 'twitter';
 	var Codebird = require("vendor/codebird");
 	this.cb = new Codebird();
 	this.cb.setConsumerKey(Ti.App.Properties.getString('twitter.consumerkey'), Ti.App.Properties.getString('twitter.consumersecret'));
@@ -30,20 +24,16 @@ Twitter.prototype.init = function(_options) {
 		console.log('Info: bearertoken always in system');
 		this.cb.setBearerToken(bearerToken);
 	}
-
 };
 
-
-Twitter.prototype.loadAccessToken = function(pService) {
-	if (!Ti.App.Properties.hasProperty(pService) || !Ti.App.Properties.getString(pService))
+TwitterAdapter.prototype.loadAccessToken = function() {
+	if (!Ti.App.Properties.hasProperty(this.service) || !Ti.App.Properties.getString(this.service))
 		return;
 	var config = undefined;
 	try {
-		config = JSON.parse(Ti.App.Properties.getString(pService));
+		config = JSON.parse(Ti.App.Properties.getString(this.service));
 	} catch(ex) {
-		return;
-	}
-	if (!config) {
+		Ti.App.Properties.removeProperty(this.service);
 		return;
 	}
 	if (config.accessToken) {
@@ -52,20 +42,18 @@ Twitter.prototype.loadAccessToken = function(pService) {
 	if (config.accessTokenSecret) {
 		this.accessTokenSecret = config.accessTokenSecret;
 	}
-
-	Ti.API.info('Info: Loading access token: done [accessToken:' + this.accessToken + '][accessTokenSecret:' + accessTokenSecret + '].');
 };
-///////////SAVE ACCESS TOKEN
-Twitter.prototype.saveAccessToken = function(pService) {
-	Ti.App.Properties.setString(pService, JSON.stringify({
+
+TwitterAdapter.prototype.saveAccessToken = function() {
+	Ti.App.Properties.setString(this.service, JSON.stringify({
 		accessToken : this.accessToken,
 		accessTokenSecret : this.accessTokenSecret
 	}));
 	Ti.API.info('Info: Saving access token: done.');
 };
 
-Twitter.prototype.clearAccessToken = function(pService) {
-	Ti.App.Properties.setString(pService, JSON.stringify({
+TwitterAdapter.prototype.clearAccessToken = function() {
+	Ti.App.Properties.setString(this.service, JSON.stringify({
 		accessToken : null,
 		accessTokenSecret : null
 	}));
@@ -73,10 +61,9 @@ Twitter.prototype.clearAccessToken = function(pService) {
 	this.accessTokenSecret = null;
 };
 
-
-Twitter.prototype.tweet = function(_tweet) {
+TwitterAdapter.prototype.tweet = function(_tweet) {
 	//this.clearAccessToken('twitter');
-	this.loadAccessToken('twitter');
+	this.loadAccessToken();
 	if (this.accessTokenSecret != null && this.accessToken != null) {
 		this.cb.setToken(this.accessToken, this.accessTokenSecret);
 		///  setTweet();
@@ -86,82 +73,61 @@ Twitter.prototype.tweet = function(_tweet) {
 		this.cb.__call("oauth_requestToken", {
 			oauth_callback : "oob"
 		}, function(reply) {
-			// stores it
+			console.log('Info: got request token: ' + JSON.stringify(reply));
 			self.cb.setToken(reply.oauth_token, reply.oauth_token_secret);
-
-			// gets the authorize screen URL
 			self.cb.__call("oauth_authorize", {}, function(auth_url) {
-
-				//window.codebird_auth = window.open(auth_url);
-				console.log('Info: oauth_authorize comes with ' + auth_url);
-				// ...
 				var win = Ti.UI.createWindow({
-					modal : true
+					modal : true,
+					width : Ti.UI.FILL,
+					height : Ti.UI.FILL,
+					transform : Ti.UI.create2DMatrix({
+						scale : 0.95
+					})
 				});
+				win.open();
 				var webView = Ti.UI.createWebView({
-					url : auth_url
+					url : auth_url,
+					width : Ti.UI.FILL,
+					height : Ti.UI.FILL
 				});
-				closeLabel = Ti.UI.createLabel({
-					textAlign : 'right',
-					font : {
-						fontWeight : 'bold',
-						fontSize : '12pt'
-					},
-					text : '(X)',
-					top : 0,
-					right : 0,
-					height : 14
-				});
-				webView.add(closeLabel);
-				closeLabel.addEventListener('click', function(e) {
-					win.remove(webView)
-				});
+				win.add(webView);
 				var destroyAuthorizeUI = function() {
 					Ti.API.info('destroyAuthorizeUI');
-					// remove the UI
 					try {
-						win.removeEventListener('load', authorizeUICallback);
+						webView.removeEventListener('load', authorizeUICallback);
 						win.remove(webView);
 						webView = null;
+						win.close();
 					} catch(ex) {
 						Ti.API.info('Cannot destroy the authorize UI. Ignoring.');
 					}
 				};
 				var authorizeUICallback = function(e) {
-					Ti.API.info('authorizeUILoaded');
-					//alert('authorizeUILoaded');
-
-					//var val = window.evalJS('document.getElementById("PINFIELD").value');
+					Ti.API.info('Info: authorizeUILoaded' + webView.html);
 					var val = webView.evalJS('window.document.querySelector(\'kbd[aria-labelledby="code-desc"] > code\').innerHTML');
 					Ti.API.info(val);
-
-					//alert(window.html);
 					if (val) {
 						destroyAuthorizeUI();
 						self.cb.__call("oauth_accessToken", {
 							oauth_verifier : val
 						}, function(reply) {
-							// store the authenticated token, which may be different from the request token (!)
 							self.cb.setToken(reply.oauth_token, reply.oauth_token_secret);
 							Ti.API.info(reply);
 							//setTweet();
 							self.accessToken = reply.oauth_token;
 							self.accessTokenSecret = reply.oauth_token_secret;
-							self.saveAccessToken('twitter');
+							self.saveAccessToken();
 						});
 					}
 				};
 				webView.addEventListener('load', authorizeUICallback);
-				win.add();
 			});
 		});
 	}
 };
 
-Twitter.prototype.fetch = function(_action, _needle, _callback) {
+TwitterAdapter.prototype.fetch = function(_action, _needle, _callback) {
 	this.cb.__call(_action, {
-		count : 100,
-		src : 'typd',
 		q : Ti.Network.encodeURIComponent(_needle)
 	}, function(reply) {
 		if (reply.httpstatus == 200)
@@ -169,4 +135,4 @@ Twitter.prototype.fetch = function(_action, _needle, _callback) {
 	}, true);
 };
 
-module.exports = Twitter;
+module.exports = TwitterAdapter;

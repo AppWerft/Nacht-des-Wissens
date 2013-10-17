@@ -8,8 +8,8 @@ exports.create = function() {
 	self.tweetButton = Ti.UI.createButton({
 		backgroundImage : '/assets/tweet.png',
 		bottom : 0,
-		width : '160dp',
-		height : '40dp',
+		width : '120dp',
+		height : '20dp',
 		right : 0,
 		bubbleParent : false,
 		height : '50dp'
@@ -89,13 +89,17 @@ exports.create = function() {
 			self.tweetButtonList.setData(rows);
 		});
 	}
+
+
 	self.add(self.tweetButtonList);
 	self.add(self.tweetButton);
-	self.tweetButton.addEventListener('click', Ti.App.Twitter.tweet());
+	self.tweetButton.addEventListener('click', function() {
+		Ti.App.Twitter.tweet();
+	});
 	self.addEventListener('focus', function() {
 		updateTweets();
 	});
-	//updateTweets();
+	updateTweets();
 	return self;
 };
 
