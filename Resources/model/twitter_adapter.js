@@ -6,9 +6,33 @@
  *
  */
 var Twitter = function(_options) {
-	this.init(_options);
+	//this.init(_options);
 	return this;
 };
+
+Twitter.prototype.init = function(_options) {
+	var Codebird = require("vendor/codebird");
+	this.cb = new Codebird();
+	this.cb.setConsumerKey(Ti.App.Properties.getString('twitter.consumerkey'), Ti.App.Properties.getString('twitter.consumersecret'));
+	this.accessToken = null;
+	this.accessTokenSecret = null;
+	var bearerToken = Ti.App.Properties.getString('TwitterBearerToken', null);
+	var self = this;
+	if (bearerToken == null) {
+		console.log('Info: bearertoken missing => fetching one');
+		this.fetch('oauth2_token', {}, function(reply) {
+			var bearer_token = reply.access_token;
+			console.log('Info: bearertoken =' + bearer_token);
+			self.cb.setBearerToken(bearer_token);
+			Ti.App.Properties.setString('TwitterBearerToken', bearer_token);
+		});
+	} else {
+		console.log('Info: bearertoken always in system');
+		this.cb.setBearerToken(bearerToken);
+	}
+
+};
+
 
 Twitter.prototype.loadAccessToken = function(pService) {
 	if (!Ti.App.Properties.hasProperty(pService) || !Ti.App.Properties.getString(pService))
@@ -49,28 +73,6 @@ Twitter.prototype.clearAccessToken = function(pService) {
 	this.accessTokenSecret = null;
 };
 
-Twitter.prototype.init = function(_options) {
-	this.accessToken = null;
-	this.accessTokenSecret = null;
-	var Codebird = require("vendor/codebird");
-	this.cb = new Codebird();
-	this.cb.setConsumerKey(Ti.App.Properties.getString('twitter.consumerkey'), Ti.App.Properties.getString('twitter.consumersecret'));
-	var bearerToken = Ti.App.Properties.getString('TwitterBearerToken', null);
-	var self = this;
-	if (bearerToken == null) {
-		console.log('Info: bearertoken missing => fetching one');
-		this.fetch('oauth2_token', {}, function(reply) {
-			var bearer_token = reply.access_token;
-			console.log('Info: bearertoken =' + bearer_token);
-			self.cb.setBearerToken(bearer_token);
-			Ti.App.Properties.setString('TwitterBearerToken', bearer_token);
-		});
-	} else {
-		console.log('Info: bearertoken always in system');
-		this.cb.setBearerToken(bearerToken);
-	}
-
-};
 
 Twitter.prototype.tweet = function(_tweet) {
 	//this.clearAccessToken('twitter');

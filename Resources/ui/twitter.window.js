@@ -5,15 +5,6 @@ exports.create = function() {
 		navBarHidden : true,
 		backgroundColor : '#00597C'
 	});
-	/*self.search = Titanium.UI.createSearchBar({
-	 barColor : '#00597C',
-	 showCancel : false,
-	 value : '#nachtdeswissens',
-	 height : '50dp',
-	 top : 0,
-	 });
-	 self.search.addEventListener('return', function(_e) {
-	 });*/
 	self.tweetButton = Ti.UI.createButton({
 		backgroundImage : '/assets/tweet.png',
 		bottom : 0,
@@ -64,7 +55,6 @@ exports.create = function() {
 		});
 	});
 	function updateTweets() {
-		return;
 		Ti.App.Twitter.fetch('search_tweets', 'NachtdesWissens', function(_response) {
 			var rows = [];
 			for (var i = 0; i < _response.statuses.length; i++) {
@@ -105,7 +95,7 @@ exports.create = function() {
 	self.addEventListener('focus', function() {
 		updateTweets();
 	});
-	updateTweets();
+	//updateTweets();
 	return self;
 };
 
