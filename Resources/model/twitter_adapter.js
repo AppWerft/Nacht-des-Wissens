@@ -27,12 +27,15 @@ TwitterAdapter.prototype.init = function(_options) {
 };
 
 TwitterAdapter.prototype.loadAccessToken = function() {
-	if (!Ti.App.Properties.hasProperty(this.service) || !Ti.App.Properties.getString(this.service))
+	if (!Ti.App.Properties.hasProperty(this.service) || !Ti.App.Properties.getString(this.service)) {
+		console.log('Info: missing accesstoken in local storage');
 		return;
+	}
 	var config = undefined;
 	try {
 		config = JSON.parse(Ti.App.Properties.getString(this.service));
 	} catch(ex) {
+		console.log('Info: accesstoken invalice => removing it');
 		Ti.App.Properties.removeProperty(this.service);
 		return;
 	}
@@ -61,12 +64,18 @@ TwitterAdapter.prototype.clearAccessToken = function() {
 	this.accessTokenSecret = null;
 };
 
-TwitterAdapter.prototype.tweet = function(_tweet) {
-	//this.clearAccessToken('twitter');
+TwitterAdapter.prototype.addTweet = function(_args) {
+};
+
+TwitterAdapter.prototype.autorize = function(_callback) {
+	console.log('Info: starting with tweeting, test on tokens:');
+	//this.clearAccessToken();
 	this.loadAccessToken();
 	if (this.accessTokenSecret != null && this.accessToken != null) {
 		this.cb.setToken(this.accessToken, this.accessTokenSecret);
-		///  setTweet();
+		_callback && _callback({
+			success : true
+		});
 	}
 	else {
 		var self = this;
@@ -113,10 +122,14 @@ TwitterAdapter.prototype.tweet = function(_tweet) {
 						}, function(reply) {
 							self.cb.setToken(reply.oauth_token, reply.oauth_token_secret);
 							Ti.API.info(reply);
-							//setTweet();
+							
 							self.accessToken = reply.oauth_token;
 							self.accessTokenSecret = reply.oauth_token_secret;
 							self.saveAccessToken();
+							_callback && _callback({
+								success : true
+							});
+
 						});
 					}
 				};

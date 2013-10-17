@@ -94,7 +94,14 @@ exports.create = function() {
 	self.add(self.tweetButtonList);
 	self.add(self.tweetButton);
 	self.tweetButton.addEventListener('click', function() {
-		Ti.App.Twitter.tweet();
+		Ti.App.Twitter.autorize(function(_reply) {
+			console.log(_reply);
+			if (_reply.success == true) {
+				var tweet = require('ui/tweet.widget').create();
+				self.add(tweet);
+			}
+
+		});
 	});
 	self.addEventListener('focus', function() {
 		updateTweets();
