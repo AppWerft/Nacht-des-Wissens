@@ -163,6 +163,7 @@ TwitterAdapter.prototype.autorize = function(_callback) {
 	}
 };
 
+//  anonymous fetching of twitter:
 TwitterAdapter.prototype.fetch = function(_action, _needle, _callback) {
 	this.cb.__call(_action, {
 		q : Ti.Network.encodeURIComponent(_needle)
