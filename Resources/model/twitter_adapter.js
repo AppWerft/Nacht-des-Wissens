@@ -3,6 +3,8 @@ var TwitterAdapter = function(_options) {
 	return this;
 };
 
+
+// Init with application only authorization (bearer)
 TwitterAdapter.prototype.init = function(_options) {
 	this.service = _options && _options.service || 'twitter';
 	var Codebird = require("vendor/codebird");
@@ -26,6 +28,7 @@ TwitterAdapter.prototype.init = function(_options) {
 	}
 };
 
+// Helpers:
 TwitterAdapter.prototype.loadAccessToken = function() {
 	if (!Ti.App.Properties.hasProperty(this.service) || !Ti.App.Properties.getString(this.service)) {
 		console.log('Info: missing accesstoken in local storage');
@@ -63,7 +66,10 @@ TwitterAdapter.prototype.clearAccessToken = function() {
 	this.accessToken = null;
 	this.accessTokenSecret = null;
 };
+// End of Helpers
 
+
+// send a tweet (only if accesstoken is present)
 TwitterAdapter.prototype.addTweet = function(_args) {
 	if (!_args.tweet.match(/ndwhh/))
 		_args.tweet += ' #ndwhh';
