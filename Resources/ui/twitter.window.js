@@ -109,6 +109,7 @@ exports.create = function() {
 	self.add(self.tweetList);
 	self.add(self.tweetButton);
 	self.tweetButton.addEventListener('click', function() {
+		self.tweetButton.setOpacity(0);
 		Ti.App.Twitter.autorize(function(_reply) {
 			if (_reply.success == true) {
 				var tweetWin = require('ui/tweet.window').create();

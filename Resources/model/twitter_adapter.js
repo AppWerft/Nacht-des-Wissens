@@ -92,6 +92,10 @@ TwitterAdapter.prototype.autorize = function(_callback) {
 			success : true
 		});
 	} else {
+		Ti.UI.createNotification({
+			message : "Starte Login bei Twitter.",
+			duration : Ti.UI.NOTIFICATION_DURATION_LONG
+		}).show();
 		var self = this;
 		this.cb.__call("oauth_requestToken", {
 			oauth_callback : "oob"

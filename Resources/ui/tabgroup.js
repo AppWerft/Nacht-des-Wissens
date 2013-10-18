@@ -4,7 +4,6 @@ exports.create = function() {
 		backgroundImage : 'default.png'
 	});
 	splash.open();
-	console.log('Info: SPLASH created ======================================');
 	var cron = setInterval(function() {
 		splash.setBackgroundImage('default_.png');
 		setTimeout(function() {
