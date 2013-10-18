@@ -68,6 +68,7 @@ exports.create = function() {
 				tabGroup.addTab(tab5);
 
 			tabGroup.open();
+			
 		}
 	});
 
