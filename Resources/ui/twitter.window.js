@@ -36,7 +36,6 @@ exports.create = function() {
 					var win = require('ui/twitterprofil.window').create(_e.rowData.user);
 					break;
 				case 1:
-					console.log(uri);
 					var win = Ti.UI.createWindow({
 						fullscreen : false
 					});
@@ -58,7 +57,6 @@ exports.create = function() {
 	});
 	function updateTweetsOnGUI() {
 		Ti.App.Twitter.fetch('search_tweets', 'NachtdesWissens OR #ndwhh', function(_response) {
-			console.log(_response);
 			var rows = [];
 			for (var i = 0; i < _response.statuses.length; i++) {
 				var tweet = _response.statuses[i];

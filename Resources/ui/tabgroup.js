@@ -55,7 +55,6 @@ exports.create = function() {
 				visible : false,
 				window : require('ui/eventsbyfavs.window').create()
 			});
-			//tabGroup.addTab(tab2);
 			if (tab1)
 				tabGroup.addTab(tab1);
 			if (tab2)
@@ -66,10 +65,8 @@ exports.create = function() {
 				tabGroup.addTab(tab3);
 			if (tab5)
 				tabGroup.addTab(tab5);
-
 			tabGroup.open();
 			
 		}
 	});
-
 };
