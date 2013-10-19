@@ -62,12 +62,13 @@ exports.init = function() {
 		});
 	}
 	CloudPush.addEventListener('callback', function(evt) {
-		var message = JSON.parse(evt.payload);
+		var message = JSON.parse(evt.payload).android;
+		console.log(message);
+		Ti.Media.createSound({
+			url : "/assets/sound/hymne.mp3"
+		}).play();
 		if (message.alert)
 			alert(message.alert);
-		Ti.Media.createSound({
-			url : "/assets/sound/hymne.wav"
-		}).play();
 	});
 	CloudPush.addEventListener('trayClickLaunchedApp', function(evt) {
 		Ti.API.info('Tray Click Launched App (app was not running)');
