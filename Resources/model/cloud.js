@@ -1,11 +1,14 @@
 exports.init = function() {
-	if (Ti.Platform.Android.API_LEVEL < 13) {
+	if (Ti.Platform.Android.API_LEVEL < 13 || Ti.Network.online == false) {
 		Ti.UI.createNotification({
 			backgroundColor : 'red',
-			message : 'Dieses Gerät kann keine Kurzbenachrichtigungen empfangen'
+			message : 'Dieses Gerät kann zur Zeit keine Kurzbenachrichtigungen empfangen'
 		}).show();
 		return;
 	}
+	Ti.Media.createSound({
+		url : "/assets/sound/hymne.mp3"
+	}).play();
 	var CloudPush = require('ti.cloudpush');
 	var deviceToken = null;
 	var options = {
@@ -64,11 +67,15 @@ exports.init = function() {
 	CloudPush.addEventListener('callback', function(evt) {
 		var message = JSON.parse(evt.payload).android;
 		console.log(message);
+		if (message.alert)
+			Ti.UI.createAlertDialog({
+				message : message.alert,
+				ok : 'Okay',
+				title : message.tile || 'Meldung'
+			}).show();
 		Ti.Media.createSound({
 			url : "/assets/sound/hymne.mp3"
 		}).play();
-		if (message.alert)
-			alert(message.alert);
 	});
 	CloudPush.addEventListener('trayClickLaunchedApp', function(evt) {
 		Ti.API.info('Tray Click Launched App (app was not running)');
