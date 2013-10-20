@@ -1,9 +1,16 @@
 // this sets the background color of the master UIView (when there are no windows/tab groups on it)
 exports.create = function() {
 	var splash = Ti.UI.createWindow({
-		backgroundImage : 'default.png'
+		backgroundImage : 'default.png',
+		fullscreen : true,
+		navBarHidden : true
 	});
-	splash.open();
+	splash.addEventListener('androidback', function() {
+		return false;
+	});
+	splash.open({
+		fullscreen : true
+	});
 	var cron = setInterval(function() {
 		splash.setBackgroundImage('default_.png');
 		setTimeout(function() {
@@ -27,8 +34,7 @@ exports.create = function() {
 		onconnect : function() {
 			clearInterval(cron);
 			Ti.App.NdW.getLastMod();
-			splash.close();
-			var tabGroup = Ti.UI.createTabGroup();
+
 			var tab1 = Titanium.UI.createTab({
 				icon : '/icons/route.png',
 				title : 'Shuttles',
@@ -55,6 +61,9 @@ exports.create = function() {
 				visible : false,
 				window : require('ui/eventsbyfavs.window').create()
 			});
+			var tabGroup = Ti.UI.createTabGroup({
+				exitOnClose : true
+			});
 			if (tab1)
 				tabGroup.addTab(tab1);
 			if (tab2)
@@ -66,7 +75,10 @@ exports.create = function() {
 			if (tab5)
 				tabGroup.addTab(tab5);
 			tabGroup.open();
-			
+			setTimeout(function() {
+				splash.close();
+			}, 1000);
+
 		}
 	});
 };

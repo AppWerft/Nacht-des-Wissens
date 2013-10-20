@@ -12,7 +12,6 @@ exports.init = function() {
 	var CloudPush = require('ti.cloudpush');
 	var deviceToken = null;
 	var options = {
-		enabled : true,
 		showTrayNotificationsWhenFocused : true,
 		showTrayNotification : true,
 		focusAppOnPush : false
@@ -59,7 +58,7 @@ exports.init = function() {
 			} else {
 				Ti.UI.createNotification({
 					backgroundColor : 'red',
-					message : '.....'
+					message : ''
 				}).show();
 			}
 		});
