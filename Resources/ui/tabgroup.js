@@ -1,5 +1,6 @@
 // this sets the background color of the master UIView (when there are no windows/tab groups on it)
 exports.create = function() {
+	Ti.UI.backgroundColor = '#00597C';
 	var intro = require('ui/intro').create();
 	Ti.App.NdW.init({
 		onprogress : function(_progress) {
