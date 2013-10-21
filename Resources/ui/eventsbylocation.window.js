@@ -2,9 +2,8 @@ exports.create = function(_options) {
 	var location = JSON.parse(_options);
 	var self = Ti.UI.createWindow({
 		fullscreen : false,
-		barColor : '#ddd',
-		navBarHidden : false,
-		title : location.teilnehmer || location.haus,
+	barImage : '/assets/rot.png',
+		barColor :'#00597C',	title : location.teilnehmer || location.haus,
 		backgroundColor : '#00597C',
 	});
 	var eventtemplate = require('ui/TEMPLATES').eventrow;

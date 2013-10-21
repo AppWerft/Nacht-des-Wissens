@@ -5,8 +5,8 @@ exports.create = function(_options) {
 	}
 	var self = Ti.UI.createWindow({
 		fullscreen : false,
-		barColor : '#ddd',
-		navBarHidden : false,
+		barImage : '/assets/rot.png',
+		barColor :'#00597C',
 		title : event.titel,
 		backgroundColor : '#00597C',
 	});

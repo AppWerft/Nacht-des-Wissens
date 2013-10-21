@@ -26,7 +26,7 @@ exports.create = function() {
 			backgroundImage : '/assets/rot.png',
 			width : Ti.UI.SIZE,
 			height : Ti.UI.SIZE,
-			top : '50dp'
+			top : '5dp'
 		});
 		banner.add(Ti.UI.createLabel({
 			text : q,
