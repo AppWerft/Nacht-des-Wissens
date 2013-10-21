@@ -1,6 +1,6 @@
 exports.create = function() {
 	var self = Ti.UI.createWindow({
-		backgroundImage : 'default.png',
+		backgroundImage : '/default.png',
 		fullscreen : true,
 		navBarHidden : true
 	});
@@ -16,9 +16,9 @@ exports.create = function() {
 	self.add(self.progress);
 	self.progress.show();
 	self.cron = setInterval(function() {
-		self.setBackgroundImage('default_.png');
+		self.setBackgroundImage('/default_.png');
 		setTimeout(function() {
-			self.setBackgroundImage('default.png');
+			self.setBackgroundImage('/default.png');
 		}, 150);
 	}, 500);
 	self.addEventListener('androidback', function() {

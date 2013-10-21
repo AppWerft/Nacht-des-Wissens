@@ -1,5 +1,5 @@
 exports.init = function() {
-	if (Ti.Platform.Android.API_LEVEL < 13 || Ti.Network.online == false) {
+	if (!Ti.Android || Ti.Platform.Android.API_LEVEL < 13 || Ti.Network.online == false) {
 		Ti.UI.createNotification({
 			backgroundColor : 'red',
 			message : 'Dieses Gerät kann zur Zeit keine Kurzbenachrichtigungen empfangen'

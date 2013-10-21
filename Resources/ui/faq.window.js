@@ -19,12 +19,14 @@ exports.create = function() {
 	for (var q in faq) {
 		var view = Ti.UI.createView({
 			layout : 'vertical',
+			height : Ti.UI.SIZE,
 			backgroundColor : '#00597C'
 		});
 		var banner = Ti.UI.createView({
 			backgroundImage : '/assets/rot.png',
 			width : Ti.UI.SIZE,
-			height : Ti.UI.SIZE
+			height : Ti.UI.SIZE,
+			top : '50dp'
 		});
 		banner.add(Ti.UI.createLabel({
 			text : q,
@@ -33,6 +35,7 @@ exports.create = function() {
 			right : '10dp',
 			bottom : '15dp',
 			color : '#fff',
+			height : Ti.UI.SIZE,
 			font : {
 				fontSize : '22dp',
 				fontFamily : 'PTSans-Narrow'
@@ -43,6 +46,7 @@ exports.create = function() {
 			text : faq[q],
 			color : 'silver',
 			left : '10dp',
+			height : Ti.UI.SIZE,
 			top : '30dp',
 			right : '10dp',
 			font : {

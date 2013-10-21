@@ -6,12 +6,11 @@ exports.create = function() {
 			intro.progress.setValue(_progress);
 		},
 		onconnect : function() {
-			console.log('Info: db successful connected');
 			clearInterval(intro.cron);
 			Ti.App.NdW.getLastMod();
-
 			var tabGroup = Ti.UI.createTabGroup({
-				exitOnClose : true
+				exitOnClose : true,
+				navBarHidden : true
 			});
 			tabGroup.addTab(Ti.UI.createTab({
 				icon : '/icons/route.png',

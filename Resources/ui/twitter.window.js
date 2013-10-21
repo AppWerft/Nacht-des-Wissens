@@ -42,8 +42,10 @@ exports.create = function() {
 					win.add(Ti.UI.createWebView({
 						url : uri[0]
 					}));
+					win.addEventListener('longpress', function() {
+						won.close();
+					});
 					break;
-
 			}
 			if (!win)
 				return;
@@ -63,7 +65,8 @@ exports.create = function() {
 				var row = Ti.UI.createTableViewRow({
 					user : tweet.user,
 					tweet : tweet.text,
-					hasChild : true
+					hasChild : true,
+					height : Ti.UI.SIZE
 				});
 				row.add(Ti.UI.createLabel({
 					text : tweet.user.name + ', ' + tweet.user.location,
@@ -87,7 +90,8 @@ exports.create = function() {
 					font : {
 						fontSize : '22dp',
 						fontFamily : 'PTSans-Narrow'
-					}
+					},
+					height : Ti.UI.SIZE
 				}));
 				row.add(Ti.UI.createImageView({
 					left : 0,

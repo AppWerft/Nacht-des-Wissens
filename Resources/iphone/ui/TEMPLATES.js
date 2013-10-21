@@ -73,7 +73,6 @@ exports.catrow = {
 	}]
 };
 
-
 exports.linerow = {
 	properties : {
 		height : 30,
@@ -173,4 +172,130 @@ exports.locrow = {
 		}]
 	}]
 };
+
+exports.eventrow = {
+	properties : {
+		height : 120,
+		backgroundColor : '#00597C',
+	},
+	events : {
+		click : function() {
+		}
+	},
+	childTemplates : [{
+		type : 'Ti.UI.ImageView',
+		bindId : 'kind',
+		properties : {
+			right : '5dp',
+			bottom : '5dp',
+			width : '20dp',
+			height : '20dp'
+		},
+		events : {
+			click : function() {
+			}
+		}
+
+	}, {
+		type : 'Ti.UI.ImageView',
+		bindId : 'rollstuhl',
+		properties : {
+			right : '30dp',
+			bottom : '5dp',
+			width : '20dp',
+			height : '20dp'
+		},
+		events : {
+			click : function() {
+			}
+		}
+
+	}, {
+		type : 'Ti.UI.View',
+		properties : {
+			top : '5dp',
+			width : Ti.UI.FILL,
+			left : "100dp",
+			right : '30dp',
+			layout : 'vertical',
+		},
+		events : {
+			click : function() {
+			}
+		},
+		childTemplates : [{
+			type : 'Ti.UI.Label',
+			bindId : 'title',
+			properties : {
+				left : 0,
+				top : 0,
+				bottom : '5dp',
+				color : '#fff',
+				font : {
+					fontSize : '20dp',
+					fontFamily : 'PTSans-Narrow'
+				},
+				height : Ti.UI.SIZE,
+			},
+			events : {
+				'click' : function() {
+				}
+			}
+		},{
+			type : 'Ti.UI.Label',
+			bindId : 'location',
+			properties : {
+				left : 0,
+				top : 0,
+				bottom : '5dp',
+				color : '#fff',
+				font : {
+					fontSize : '18dp',
+					fontFamily : 'PTSans-Narrow'
+				},
+				height : Ti.UI.SIZE,
+			},
+			events : {
+				'click' : function() {
+				}
+			}
+		}, {
+			type : 'Ti.UI.Label',
+			bindId : 'zeit',
+			properties : {
+				left : 0,
+				top : 0,
+				backgroundImage : '/assets/rot.png',
+				bottom : '5dp',
+				color : '#fff',
+				font : {
+					fontSize : '16dp',
+					fontFamily : 'PTSans-Narrow'
+				},
+				height : Ti.UI.SIZE,
+			},
+			events : {
+				'click' : function() {
+				}
+			}
+		}]
+	},{
+		type : 'Ti.UI.ImageView',
+		bindId : 'pict',
+		properties : {
+			left : 0,
+			top : '5dp',
+			defaultImage : '/assets/uhu.png',
+			bottom : '5dp',
+			width : '90dp',
+			height : Ti.UI.SIZE
+		},
+		events : {
+			click : function() {
+			}
+		}
+
+	}]
+};
+
 

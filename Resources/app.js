@@ -5,7 +5,7 @@
 	var NdW = require('model/ndw');
 	Ti.App.NdW = new NdW();
 	require('ui/tabgroup').create();
-	require('model/cloud').init();
+	if (Ti.Android)
+		require('model/cloud').init();
 })();
-
 

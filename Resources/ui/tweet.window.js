@@ -17,10 +17,11 @@ exports.create = function() {
 		height : Ti.UI.FILL
 	});
 	self.add(self.bg);
-	self.view = Ti.UI.createView({
-		layout : 'vertical'
+	self.container = Ti.UI.createView({
+		layout : 'vertical',
+		height : Ti.UI.FILL
 	});
-	self.add(self.view);
+	self.add(self.container);
 	self.input = Ti.UI.createTextArea({
 		barColor : '#00597C',
 		value : '#ndwhh ',
@@ -32,7 +33,7 @@ exports.create = function() {
 		right : '10dp',
 		width : Ti.UI.FILL,
 	});
-	self.view.add(Ti.UI.createLabel({
+	self.container.add(Ti.UI.createLabel({
 		text : 'Dein Tweet zur Nacht:',
 		top : '10dp',
 		backgroundColor : 'black',
@@ -58,8 +59,8 @@ exports.create = function() {
 		bottom : 0,
 		max : 180
 	});
-	self.view.add(self.progressbar);
-	self.view.add(self.input);
+	self.container.add(self.progressbar);
+	self.container.add(self.input);
 	self.tweetbutton = Ti.UI.createButton({
 		right : '10dp',
 		bottom : '10dp',
@@ -69,7 +70,7 @@ exports.create = function() {
 		width : '100dp',
 		title : 'Twittern',
 	});
-	self.view.add(self.tweetbutton);
+	self.container.add(self.tweetbutton);
 	self.input.focus();
 	self.input.addEventListener('return', function(_e) {
 		self.input.blur();

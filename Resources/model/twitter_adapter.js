@@ -77,7 +77,7 @@ TwitterAdapter.prototype.addTweet = function(_args) {
 		"status" : _args.tweet
 	}, function(reply) {
 		if (reply.httpstatus == 200) {
-			Ti.UI.createNotification({
+			Ti.Android && Ti.UI.createNotification({
 				message : "Tweet erfolgreich publiziert.",
 				duration : Ti.UI.NOTIFICATION_DURATION_LONG
 			}).show();
@@ -98,7 +98,7 @@ TwitterAdapter.prototype.autorize = function(_callback) {
 			success : true
 		});
 	} else {
-		Ti.UI.createNotification({
+		Ti.Android && Ti.UI.createNotification({
 			message : "Starte Login bei Twitter.",
 			duration : Ti.UI.NOTIFICATION_DURATION_LONG
 		}).show();

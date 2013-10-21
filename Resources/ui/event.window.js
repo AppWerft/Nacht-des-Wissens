@@ -13,6 +13,8 @@ exports.create = function(_options) {
 	var container = Ti.UI.createScrollView({
 		scrollType : 'vertical',
 		left : '10dp',
+		width : Ti.UI.FILL,
+		contentWidth : Ti.UI.FILL,
 		right : '10dp',
 		layout : 'vertical',
 		top : 0
@@ -22,7 +24,8 @@ exports.create = function(_options) {
 		backgroundImage : '/assets/rot.png',
 		width : Ti.UI.SIZE,
 		left : 0,
-		top : 0,
+		height : Ti.UI.SIZE,
+		top : '20dp',
 		height : Ti.UI.SIZE
 	});
 	banner.add(Ti.UI.createLabel({
@@ -32,6 +35,7 @@ exports.create = function(_options) {
 		right : '10dp',
 		bottom : '10dp',
 		color : '#fff',
+		height : Ti.UI.SIZE,
 		font : {
 			fontSize : '26dp',
 			fontFamily : 'PTSans-Narrow'
@@ -42,6 +46,7 @@ exports.create = function(_options) {
 		text : event.description,
 		top : '7dp',
 		color : '#fff',
+		height : Ti.UI.SIZE,
 		font : {
 			fontSize : '20dp',
 			fontFamily : 'PTSans-Narrow'
@@ -129,14 +134,14 @@ exports.create = function(_options) {
 		top : '10dp',
 		height : Ti.UI.SIZE,
 		color : '#fff',
-		font : {   
+		font : {
 			fontSize : '20dp',
 			fontFamily : 'PTSans-Narrow'
 		},
 	}));
 	self.add(container);
 	if (!Ti.App.Properties.hasProperty('star'))
-		Ti.UI.createNotification({
+		Ti.Android && Ti.UI.createNotification({
 			message : "Mit dem kleinen Stern rechts oben kannst Du Dir dieses Ereignis merken.",
 			duration : Ti.UI.NOTIFICATION_DURATION_SHORT
 		}).show();

@@ -8,9 +8,9 @@ Array.prototype.in_array = function(needle) {
 var NdW = function() {
 	return this;
 };
-
+var DB;
 NdW.prototype.init = function(_args) {
-	/*this.DB = Ti.Database.install('/model/nachtdeswissens.sqlite', 'nachtdeswissensutf8');
+	/*DB = Ti.Database.install('/model/nachtdeswissens.sqlite', 'nachtdeswissensutf8');
 	 _args.onconnect && _args.onconnect(true);
 	 return;*/
 	var self = this;
@@ -19,10 +19,10 @@ NdW.prototype.init = function(_args) {
 		aspectedtablecount : 6,
 		aspectedcontentlength : 600000,
 		onprogress : _args.onprogress,
-		onconnect : function(_DBconn) {
-			console.log('Info: sucessful mirroring in model::init ' + _DBconn);
-			self.DB = _DBconn;
-			console.log('Info: ==========');
+		onconnect : function(_dbname) {
+			console.log('Info: sucessful mirroring in model::init ' + _dbname);
+			DB = Ti.Database.open(_dbname);
+			console.log('Info: ==========' + DB);
 			_args.onconnect && _args.onconnect(true);
 		}
 	});
@@ -41,11 +41,11 @@ NdW.prototype.getDB = function(_args) {
 			console.log('Info: tables found=' + total + ' aspectedtablecount=' + _args.aspectedtablecount);
 			res.close();
 			if (total == _args.aspectedtablecount && _args.onconnect) {
-				Ti.UI.createNotification({
+				Ti.Android && Ti.UI.createNotification({
 					message : "Keine neue Version verfügbar, nutze Daten der letzten Mutzung.",
 					duration : Ti.UI.NOTIFICATION_DURATION_LONG
 				}).show();
-				_args.onconnect(DBconn);
+				_args.onconnect(dbname);
 			} else {
 				if (Ti.Android)
 					DBconn.remove();
@@ -59,13 +59,7 @@ NdW.prototype.getDB = function(_args) {
 				DBconn.remove();
 			else
 				DBconn.file.deleteFile();
-
 			alert('Für die Aktualisierung der Daten braucht die App wenigstens einmal das Internet');
-			if (_args.defaultpath) {
-				DBconn = Ti.Database.install(_args.defaultpath, dbname);
-				_args.onconnect && _args.onconnect(DBconn);
-				Ti.App.Properties.setString('dbmtime', (new Date).getTime());
-			}
 		}
 	};
 	var xhr = Ti.Network.createHTTPClient({
@@ -79,21 +73,24 @@ NdW.prototype.getDB = function(_args) {
 		},
 		onload : function() {
 			var filename = dbname + '.sql';
+			console.log('Info: dbfilename=' + filename);
 			var tempfile = Ti.Filesystem.getFile(Ti.Filesystem.getTempDirectory(), filename);
 			tempfile.write(this.responseData);
 			try {
 				var dummy = Ti.Database.open(dbname);
 				if (Ti.Android)
 					dummy.remove();
-				else
+				else {
+					console.log('Info: try to remove ' + dummy.file);
 					dummy.file.deleteFile();
+				}
 			} catch(E) {
 				onOffline();
 				return;
 			}
 			DBconn = Ti.Database.install(tempfile.nativePath, dbname);
 			console.log('Info: DBhandler ' + DBconn);
-			_args.onconnect && _args.onconnect(DBconn);
+			_args.onconnect && _args.onconnect(dbname);
 		}
 	});
 	xhr.open('GET', _args.url);
@@ -101,9 +98,9 @@ NdW.prototype.getDB = function(_args) {
 };
 
 NdW.prototype.getLastMod = function() {
-	var res = this.DB.execute('SELECT modifiziert_am mtime FROM veranstaltungsorte ORDER BY modifiziert_am DESC LIMIT 0,1');
+	var res = DB.execute('SELECT modifiziert_am mtime FROM veranstaltungsorte ORDER BY modifiziert_am DESC LIMIT 0,1');
 	if (res.isValidRow()) {
-		Ti.UI.createNotification({
+		Ti.Android && Ti.UI.createNotification({
 			message : "Letzte Änderung:  " + res.fieldByName('mtime'),
 			duration : Ti.UI.NOTIFICATION_DURATION_LONG,
 			bottom : 0,
@@ -147,7 +144,7 @@ NdW.prototype.getEventsByLocation = function(_id) {
 		return event;
 	};
 	var sql = 'SELECT * FROM programmpunkte WHERE veranstaltungsort_id=' + _id;
-	var eventset = self.DB.execute(sql);
+	var eventset = DB.execute(sql);
 	var events = [];
 	while (eventset.isValidRow()) {
 		events.push(getEvent(eventset));
@@ -167,7 +164,7 @@ NdW.prototype.getEventsByTag = function(_tag) {
 		}
 		return event;
 	};
-	var eventset = self.DB.execute('SELECT * FROM programmpunkte WHERE schlagwort_1=? OR schlagwort_2=? OR schlagwort_3=? OR schlagwort_4=? OR schlagwort_5=? OR schlagwort_6=? ', _tag, _tag, _tag, _tag, _tag, _tag);
+	var eventset = DB.execute('SELECT * FROM programmpunkte WHERE schlagwort_1=? OR schlagwort_2=? OR schlagwort_3=? OR schlagwort_4=? OR schlagwort_5=? OR schlagwort_6=? ', _tag, _tag, _tag, _tag, _tag, _tag);
 	var events = [];
 	while (eventset.isValidRow()) {
 		events.push(getEvent(eventset));
@@ -178,7 +175,7 @@ NdW.prototype.getEventsByTag = function(_tag) {
 };
 
 NdW.prototype.getLocationsByLine = function(line) {
-	var res = this.DB.execute('SELECT * FROM veranstaltungsorte WHERE  haus <> "Wissenschaftszelt" AND (route_1_id = ? OR route_2_id = ? OR route_3_id = ? OR route_4_id = ? OR route_5_id = ? OR route_6_id = ? OR route_7_id = ?)', line, line, line, line, line, line, line);
+	var res = DB.execute('SELECT * FROM veranstaltungsorte WHERE  haus <> "Wissenschaftszelt" AND (route_1_id = ? OR route_2_id = ? OR route_3_id = ? OR route_4_id = ? OR route_5_id = ? OR route_6_id = ? OR route_7_id = ?)', line, line, line, line, line, line, line);
 	var loclist = [];
 	while (res.isValidRow()) {
 		loclist.push({
@@ -200,7 +197,7 @@ NdW.prototype.getLocationById = function(id) {
 	var self = this;
 	var getShuttlesById = function(ids) {
 		var sql = 'SELECT * FROM routen WHERE id IN (' + ids.join(',') + ')';
-		var res = self.DB.execute(sql);
+		var res = DB.execute(sql);
 		var shuttles = [];
 		while (res.isValidRow()) {
 			shuttles.push({
@@ -212,7 +209,7 @@ NdW.prototype.getLocationById = function(id) {
 		res.close();
 		return shuttles;
 	};
-	var res = this.DB.execute('SELECT *,hvv_link_id hvvlink FROM veranstaltungsorte WHERE id= ?', id);
+	var res = DB.execute('SELECT *,hvv_link_id hvvlink FROM veranstaltungsorte WHERE id= ?', id);
 	var location = {};
 	if (res.isValidRow()) {
 		location = {
@@ -245,7 +242,7 @@ NdW.prototype.getLocationById = function(id) {
 };
 
 NdW.prototype.getTags = function() {
-	var res = this.DB.execute('SELECT * FROM schlagwoerter ORDER BY name');
+	var res = DB.execute('SELECT * FROM schlagwoerter ORDER BY name');
 	var tags = [];
 	while (res.isValidRow()) {
 		tags.push({
@@ -259,7 +256,7 @@ NdW.prototype.getTags = function() {
 };
 
 NdW.prototype.searchEvents = function(_args) {
-	var res = this.DB.execute('SELECT * FROM programmpunkte WHERE beschreibung LIKE "%' + _args.needle + '%"');
+	var res = DB.execute('SELECT * FROM programmpunkte WHERE beschreibung LIKE "%' + _args.needle + '%"');
 	var results = [];
 	while (res.isValidRow()) {
 		var id = res.fieldByName('id');
@@ -271,7 +268,6 @@ NdW.prototype.searchEvents = function(_args) {
 			zeit : res.fieldByName('zeit') || 'keine Angabe',
 			ort : res.fieldByName('ort') || 'keine Angabe',
 			barrierefrei : (res.fieldByName('nicht_barrierefrei')) ? false : true,
-			catering : res.fieldByName('catering'),
 			kinderprogramm : res.fieldByName('kinderprogramm'),
 			kinderab : res.fieldByName('kinder_ab'),
 			location : this.getLocationById(res.fieldByName('veranstaltungsort_id'))
@@ -285,7 +281,7 @@ NdW.prototype.searchEvents = function(_args) {
 
 NdW.prototype.getEventById = function(id) {
 	var result = undefined;
-	var res = this.DB.execute('SELECT * FROM programmpunkte WHERE id = ?', id);
+	var res = DB.execute('SELECT * FROM programmpunkte WHERE id = ?', id);
 	if (res.isValidRow()) {
 		var id = res.fieldByName('id');
 		result = {
@@ -296,7 +292,6 @@ NdW.prototype.getEventById = function(id) {
 			zeit : res.fieldByName('zeit') || 'keine Angabe',
 			ort : res.fieldByName('ort') || 'keine Angabe',
 			barrierefrei : (res.fieldByName('nicht_barrierefrei')) ? false : true,
-			catering : res.fieldByName('catering'),
 			kinderprogramm : res.fieldByName('kinderprogramm'),
 			kinderab : res.fieldByName('kinder_ab'),
 			location : this.getLocationById(res.fieldByName('veranstaltungsort_id'))
@@ -308,7 +303,7 @@ NdW.prototype.getEventById = function(id) {
 
 NdW.prototype.getAllLines = function() {
 	var self = this;
-	var routen = self.DB.execute('SELECT * FROM routen ORDER BY name');
+	var routen = DB.execute('SELECT * FROM routen ORDER BY name');
 	var list = [];
 	while (routen.isValidRow()) {
 		var id = routen.fieldByName('id');
