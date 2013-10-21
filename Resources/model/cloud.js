@@ -6,15 +6,13 @@ exports.init = function() {
 		}).show();
 		return;
 	}
-	Ti.Media.createSound({
-		url : "/assets/sound/hymne.mp3"
-	}).play();
 	var CloudPush = require('ti.cloudpush');
 	var deviceToken = null;
 	var options = {
 		showTrayNotificationsWhenFocused : true,
 		showTrayNotification : true,
-		focusAppOnPush : false
+		focusAppOnPush : false,
+		debug : false
 	};
 	for (var key in options) {
 		CloudPush[key] = options[key];
@@ -25,7 +23,7 @@ exports.init = function() {
 		error : deviceTokenError
 	});
 	var Cloud = require('ti.cloud');
-	Cloud.debug = true;
+	Cloud.debug = false;
 	var deviceToken = null;
 
 	function deviceTokenError(e) {
@@ -63,6 +61,8 @@ exports.init = function() {
 			}
 		});
 	}
+
+
 	CloudPush.addEventListener('callback', function(evt) {
 		var message = JSON.parse(evt.payload).android;
 		console.log(message);

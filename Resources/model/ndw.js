@@ -22,6 +22,7 @@ NdW.prototype.init = function(_args) {
 		onconnect : function(_DBconn) {
 			console.log('Info: sucessful mirroring in model::init ' + _DBconn);
 			self.DB = _DBconn;
+			console.log('Info: ==========');
 			_args.onconnect && _args.onconnect(true);
 		}
 	});
