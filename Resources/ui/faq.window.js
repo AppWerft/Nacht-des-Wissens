@@ -11,9 +11,9 @@ exports.create = function() {
 	};
 	var self = Ti.UI.createWindow({
 		fullscreen : false,
-		barColor : '#ddd',
-		navBarHidden : true,
-		title : 'FAQ'
+		barImage : '/assets/rot.png',
+		barColor :'#00597C',
+		title : 'Häufige Fragen'
 	});
 	var views = [];
 	for (var q in faq) {

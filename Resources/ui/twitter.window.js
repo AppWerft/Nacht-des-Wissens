@@ -1,8 +1,8 @@
 exports.create = function() {
 	var self = Ti.UI.createWindow({
 		fullscreen : false,
-		barColor : '#ddd',
-		navBarHidden : true,
+		barImage : '/assets/rot.png',
+		barColor :'#00597C',title:'Twitter #ndwhh',
 		backgroundColor : '#00597C'
 	});
 	self.tweetButton = Ti.UI.createButton({
