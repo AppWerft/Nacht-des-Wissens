@@ -129,7 +129,8 @@ exports.locrow = {
 		bindId : 'pict',
 		properties : {
 			left : 0,
-			top : '5dp',defaultImage:'',
+			top : '5dp',
+			defaultImage:'',
 			bottom : '5dp',
 			width : '80dp',
 			height : Ti.UI.SIZE
@@ -175,7 +176,7 @@ exports.locrow = {
 
 exports.eventrow = {
 	properties : {
-		height : 120,
+		height : '140dp',
 		backgroundColor : '#00597C',
 	},
 	events : {
@@ -235,7 +236,7 @@ exports.eventrow = {
 					fontSize : '20dp',
 					fontFamily : 'PTSans-Narrow'
 				},
-				height : Ti.UI.SIZE,
+				height : '50dp',
 			},
 			events : {
 				'click' : function() {
@@ -246,14 +247,14 @@ exports.eventrow = {
 			bindId : 'location',
 			properties : {
 				left : 0,
-				top : 0,
+				top : 0,height:'25dp',
 				bottom : '5dp',
 				color : '#fff',
 				font : {
 					fontSize : '18dp',
 					fontFamily : 'PTSans-Narrow'
 				},
-				height : Ti.UI.SIZE,
+				height : '45dp',
 			},
 			events : {
 				'click' : function() {

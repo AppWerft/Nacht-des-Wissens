@@ -2,8 +2,9 @@ exports.create = function(_options) {
 	var location = JSON.parse(_options);
 	var self = Ti.UI.createWindow({
 		fullscreen : false,
-	barImage : '/assets/rot.png',
-		barColor :'#00597C',	title : location.teilnehmer || location.haus,
+		barImage : '/assets/rot.png',
+		barColor : '#00597C',
+		title : location.teilnehmer || location.haus,
 		backgroundColor : '#00597C',
 	});
 	var eventtemplate = require('ui/TEMPLATES').eventrow;
@@ -19,6 +20,7 @@ exports.create = function(_options) {
 	var data = [];
 	for (var i = 0; i < events.length; i++) {
 		var event = events[i];
+		console.log(event);
 		data.push({
 			kind : {
 				image : (event.kinderprogramm == true) ? '/assets/forkind.png' : '/assets/null.png'
@@ -28,6 +30,12 @@ exports.create = function(_options) {
 			},
 			title : {
 				text : event.titel
+			},
+			location : {
+				text : event.location.haus
+			},
+			pict : {
+				image : event.location.pict
 			},
 			zeit : {
 				text : (event.zeit) ? event.zeit + '  ' : null

@@ -3,7 +3,7 @@ exports.create = function() {
 	var self = Ti.UI.createWindow({
 		fullscreen : false,
 		barImage : '/assets/rot.png',
-		barColor :'#00597C',
+		barColor : '#00597C',
 		backgroundColor : '#00597C',
 		title : 'Meine Nachttour'
 	});
@@ -31,6 +31,12 @@ exports.create = function() {
 				},
 				rollstuhl : {
 					image : (event['nicht_barrierefrei']) ? '/assets/norollstuhl.png' : '/assets/rollstuhl.png'
+				},
+				location : {
+					text : event.location.haus
+				},
+				pict : {
+					image : event.location.pict
 				},
 				title : {
 					text : event.titel

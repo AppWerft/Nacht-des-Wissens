@@ -17,9 +17,11 @@ exports.create = function() {
 	});
 	var views = [];
 	for (var q in faq) {
-		var view = Ti.UI.createView({
+		var view = Ti.UI.createScrollView({
+			width:Ti.UI.FILL,
 			layout : 'vertical',
-			height : Ti.UI.SIZE,
+			height : Ti.UI.FILL,
+			contentHeight : Ti.UI.SIZE,
 			backgroundColor : '#00597C'
 		});
 		var banner = Ti.UI.createView({

@@ -136,10 +136,11 @@ NdW.prototype.getFavs = function() {
 NdW.prototype.getEventsByLocation = function(_id) {
 	var self = this;
 	var getEvent = function(eventset) {
-		var keys = ['id', 'titel', 'kinderprogramm', 'kinder_ab', 'ort', 'zeit', 'beschreibung'];
+		var keys = ['id','veranstaltungsort_id', 'titel', 'kinderprogramm', 'kinder_ab', 'ort', 'zeit', 'beschreibung'];
 		var event = {};
 		for (var i = 0; i < keys.length; i++) {
 			event[keys[i]] = eventset.fieldByName(keys[i]);
+			event.location = self.getLocationById(eventset.fieldByName('veranstaltungsort_id'))
 		}
 		return event;
 	};
@@ -175,7 +176,7 @@ NdW.prototype.getEventsByTag = function(_tag) {
 };
 
 NdW.prototype.getLocationsByLine = function(line) {
-	var res = DB.execute('SELECT * FROM veranstaltungsorte WHERE  haus <> "Wissenschaftszelt" AND (route_1_id = ? OR route_2_id = ? OR route_3_id = ? OR route_4_id = ? OR route_5_id = ? OR route_6_id = ? OR route_7_id = ?)', line, line, line, line, line, line, line);
+	var res = DB.execute('SELECT id, teilnehmer, haus, nicht_barrierefrei, catering,grafik,bild_datei FROM veranstaltungsorte WHERE (route_1_id = ? OR route_2_id = ? OR route_3_id = ? OR route_4_id = ? OR route_5_id = ? OR route_6_id = ? OR route_7_id = ?)', line, line, line, line, line, line, line);
 	var loclist = [];
 	while (res.isValidRow()) {
 		loclist.push({
